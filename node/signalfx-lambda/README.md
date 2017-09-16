@@ -11,7 +11,7 @@ Use `node-lambda` to test the wrapper locally.
  SIGNALFX_API_PORT=443
  SIGNALFX_API_SCHEME=https
  SIGNALFX_AUTH_TOKEN=[token]
- ```
+```
 
 3) Run `node-lambda run -f deploy.env` and see the result.
 
@@ -23,18 +23,22 @@ run `npm pack` to package the module with configurations in `package.json`
 
 ## Usage of deployed package
 The module can be used locally by relative reference in `package.json` as
-``` {
+```
+{
 	"name": "signalfx-test",
   "dependencies": {
       "signalfx-lambda": "file:../signalfx-lambda-0.0.3.tgz"
   }
-}```
+}
+```
 
 The module can be used from hosted package as
-``` {
+```
+{
 	"name": "signalfx-test",
   "dependencies": {
       "signalfx-lambda": "https://cdn.signalfx.com/signalfx-lambda-0.0.3.tgz"
   }
-}```
+}
+```
 
