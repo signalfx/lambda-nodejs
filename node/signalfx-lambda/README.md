@@ -25,7 +25,7 @@ run `npm pack` to package the module with configurations in `package.json`
 The module can be used locally by relative reference in `package.json` as
 ```
 {
-	"name": "signalfx-test",
+  "name": "signalfx-test",
   "dependencies": {
       "signalfx-lambda": "file:../signalfx-lambda-0.0.3.tgz"
   }
@@ -35,7 +35,7 @@ The module can be used locally by relative reference in `package.json` as
 The module can be used from hosted package as
 ```
 {
-	"name": "signalfx-test",
+  "name": "signalfx-test",
   "dependencies": {
       "signalfx-lambda": "https://cdn.signalfx.com/signalfx-lambda-0.0.3.tgz"
   }
