@@ -27,7 +27,7 @@ The module can be used locally by relative reference in `package.json` as
 {
   "name": "signalfx-test",
   "dependencies": {
-      "signalfx-lambda": "file:../signalfx-lambda-0.0.3.tgz"
+      "signalfx-lambda": "file:../signalfx-lambda-0.0.4.tgz"
   }
 }
 ```
@@ -37,7 +37,7 @@ The module can be used from hosted package as
 {
   "name": "signalfx-test",
   "dependencies": {
-      "signalfx-lambda": "https://cdn.signalfx.com/signalfx-lambda-0.0.3.tgz"
+      "signalfx-lambda": "https://cdn.signalfx.com/signalfx-lambda-0.0.4.tgz"
   }
 }
 ```
