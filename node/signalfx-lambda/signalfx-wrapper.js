@@ -22,18 +22,18 @@ var coldStart = true;
 class SignalFxWrapper {
   constructor(
     originalObj,
-    customFn,
-    customEvent,
-    customContext,
-    customCallback
+    originalFn,
+    originalEvent,
+    originalContext,
+    originalCallback
   ) {
     this.originalObj = originalObj;
-    this.customFn = customFn;
-    this.customEvent = customEvent;
-    this.customContext = customContext;
-    this.customCallback = customCallback;
+    this.originalFn = originalFn;
+    this.originalEvent = originalEvent;
+    this.originalContext = originalContext;
+    this.originalCallback = originalCallback;
 
-    sfxHelper.setLambdaFunctionContext(this.customContext);
+    sfxHelper.setLambdaFunctionContext(this.originalContext);
     sfxHelper.sendCounter('aws.lambda.invocation', 1);
     if (coldStart) {
       sfxHelper.sendCounter('aws.lambda.coldStart', 1);
@@ -43,49 +43,53 @@ class SignalFxWrapper {
   }
 
   invoke() {
-    var retval;
-    var error;
+    var exception, error, message;
 
     const startTime = new Date().getTime();
 
+    const customCallback = (err, msg) => {
+      error = err;
+      message = msg;
+    }
+
     try {
-      retval = this.customFn.call(
+      this.originalFn.call(
         this.originalObj,
-        this.customEvent,
-        this.customContext,
-        this.customCallback
+        this.originalEvent,
+        this.originalContext,
+        customCallback
       );
     } catch (err) {
       sfxHelper.sendCounter('aws.lambda.error', 1);
-      error = err;
+      exception = err;
     } finally {
       sfxHelper.sendGauge('aws.lambda.executionTime', new Date().getTime() - startTime);
       sfxHelper.sendCounter('aws.lambda.complete', 1);
 
-      if (error) {
-        throw error;
-      }
       const after = () => {
-        return retval;
+        if (exception) {
+          throw exception;
+        }
+        this.originalCallback(error, message);
       }
-      return sfxHelper.waitForMetricRequests().then(after, after);
+      sfxHelper.waitForMetricRequests().then(after, after);
     }
   }
 }
 
-module.exports = customFn => {
+module.exports = originalFn => {
   return function customHandler(
-    customEvent,
-    customContext,
-    customCallback
+    originalEvent,
+    originalContext,
+    originalCallback
   ) {
     var originalObj = this;
     return new SignalFxWrapper(
       originalObj,
-      customFn,
-      customEvent,
-      customContext,
-      customCallback
+      originalFn,
+      originalEvent,
+      originalContext,
+      originalCallback
     ).invoke();
   };
 };

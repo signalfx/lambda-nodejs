@@ -1,5 +1,6 @@
 {
   "key": "value",
   "key2": "value2",
-  "other_key": "other_value"
+  "other_key": "other_value",
+  "my_test_value": "correct"
 }
