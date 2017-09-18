@@ -68,7 +68,7 @@ class SignalFxWrapper {
       const after = () => {
         return retval;
       }
-      return sfxHelper.waitForMetricRequests(after, after);
+      return sfxHelper.waitForMetricRequests().then(after, after);
     }
   }
 }

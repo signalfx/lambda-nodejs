@@ -1,4 +1,4 @@
 deploy.env
 .lambda
-.build
+build
 node_modules
