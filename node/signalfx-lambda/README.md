@@ -4,8 +4,8 @@ SignalFx Node Lambda Wrapper.
 
 ## Testing
 Use `node-lambda` to test the wrapper locally.
-1) Install node-lambda via npm install node-lambda
-2) Create deploy.env and add the following environment variables which is required to submit data to signalfx
+1) Install node-lambda via `npm install node-lambda`.
+2) Create deploy.env and add the following environment variables that are required, to submit data to SignalFx:
 ```
  SIGNALFX_API_HOSTNAME=ingest.signalfx.com
  SIGNALFX_API_PORT=443
@@ -16,28 +16,28 @@ Use `node-lambda` to test the wrapper locally.
 3) Run `node-lambda run -f deploy.env` and see the result.
 
 ## Uploading the test package
-`node-lambda deploy -f deploy.env` and it will deploy to AWS using your environmental variable to lambda function configured in `.env`
+Run `node-lambda deploy -f deploy.env` to deploy to AWS, using the environmental variables for the Lambda function configured in `.env`.
 
 ## Deploy
-run `npm pack` to package the module with configurations in `package.json`
+Run `npm pack` to package the module with the configuration in `package.json`.
 
 ## Usage of deployed package
-The module can be used locally by relative reference in `package.json` as
+The module can be used locally by a relative reference in `package.json`:
 ```
 {
   "name": "signalfx-test",
   "dependencies": {
-      "signalfx-lambda": "file:../signalfx-lambda-0.0.4.tgz"
+    "signalfx-lambda": "file:../signalfx-lambda-0.0.4.tgz"
   }
 }
 ```
 
-The module can be used from hosted package as
+Alternatively, the module can be used from the hosted package:
 ```
 {
   "name": "signalfx-test",
   "dependencies": {
-      "signalfx-lambda": "https://cdn.signalfx.com/signalfx-lambda-0.0.4.tgz"
+    "signalfx-lambda": "https://cdn.signalfx.com/signalfx-lambda-0.0.4.tgz"
   }
 }
 ```

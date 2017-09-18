@@ -71,6 +71,6 @@ module.exports = {
   },
 
   waitForMetricRequests: function waitForMetricRequests() {
-	  return Promise.all(lambdaFunctionPromises);
+    return Promise.all(lambdaFunctionPromises);
   }
 }
