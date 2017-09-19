@@ -23,6 +23,7 @@ var metricSender = new signalfx.IngestJson(AUTH_TOKEN, CLIENT_OPTIONS);
 
 function sendMetric(metricName, metricType, metricValue, dimensions={}) {
   if (lambdaFunctionContext) {
+    // TODO: do this once and not everytime we're sending metric
     // Use AWS ARN as dimension uniquely identifying Lambda function
     dimensions.sf_source = lambdaFunctionContext.invokedFunctionArn;
 

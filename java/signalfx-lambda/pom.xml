@@ -58,7 +58,7 @@
         <configuration>
           <mainClass>com.cagataygurturk.lambda.LocalRunner</mainClass>
           <arguments>
-            <argument>example.Example</argument>
+            <argument>com.signalfx.lambda.SignalFxRequestWrapper</argument>
           </arguments>
         </configuration>
       </plugin>
