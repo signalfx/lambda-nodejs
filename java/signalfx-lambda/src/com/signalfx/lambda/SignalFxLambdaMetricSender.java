@@ -1,4 +1,4 @@
-package example;
+package com.signalfx.lambda;
 
 import java.util.Collections;
 import java.util.Map;

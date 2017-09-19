@@ -1,4 +1,4 @@
-package example;
+package com.signalfx.lambda;
 
 import java.io.IOException;
 import java.util.HashMap;
