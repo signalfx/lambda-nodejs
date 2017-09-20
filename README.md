@@ -9,7 +9,7 @@ Use `node-lambda` to test the wrapper locally.
 ```
  SIGNALFX_AUTH_TOKEN=[token] - required
  SIGNALFX_SEND_TIMEOUT=[millescondsToWaitForRequest]
- # Set only all of the following or none, to use the defaults, for the ingest endpoint URL:
+ # Set either all of the following or none (to use the defaults), for the ingest endpoint URL:
  SIGNALFX_API_HOSTNAME=ingest.signalfx.com
  SIGNALFX_API_PORT=443
  SIGNALFX_API_SCHEME=https

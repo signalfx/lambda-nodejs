@@ -20,15 +20,14 @@ if (!isNaN(timeoutMs)) {
 }
 
 var lambdaFunctionContext;
-var lambdaFunctionDimensions = {};
+var lambdaFunctionDimensions;
 
 var metricSender = new signalfx.IngestJson(AUTH_TOKEN, CLIENT_OPTIONS);
 var sendPromises = [];
 
 function sendMetric(metricName, metricType, metricValue, dimensions={}) {
-  if (!lambdaFunctionDimensions.sf_source && lambdaFunctionContext) {
-    // Use AWS ARN as dimension uniquely identifying Lambda function
-    lambdaFunctionDimensions.sf_source = lambdaFunctionContext.invokedFunctionArn;
+  if (!lambdaFunctionDimensions && lambdaFunctionContext) {
+    lambdaFunctionDimensions = {'sf_source': lambdaFunctionContext.invokedFunctionArn};
 
     const splitted = lambdaFunctionContext.invokedFunctionArn.split(':');
     if (splitted[2] === 'lambda') {
@@ -61,6 +60,10 @@ function sendMetric(metricName, metricType, metricValue, dimensions={}) {
   return sendPromise;
 }
 
+const clearSendPromises = () => {
+  sendPromises = [];
+}
+
 module.exports = {
   setLambdaFunctionContext: function setLambdaFunctionContext(context) {
     lambdaFunctionContext = context;
@@ -79,8 +82,6 @@ module.exports = {
   },
 
   waitForAllSends: function waitForAllSends() {
-    return Promise.all(sendPromises).then(() => {
-      sendPromises = [];
-    });
+    return Promise.all(sendPromises).then(clearSendPromises, clearSendPromises);
   }
 }

@@ -51,13 +51,13 @@ class SignalFxWrapper {
       sfxHelper.sendGauge('aws.lambda.executionTime', new Date().getTime() - startTime);
       sfxHelper.sendCounter('aws.lambda.complete', 1);
 
-      const after = () => {
+      const runCallback = () => {
         if (exception) {
           this.originalCallback(exception, "Exception was thrown");
         }
         this.originalCallback(error, message);
       }
-      sfxHelper.waitForAllSends().then(after, after);
+      sfxHelper.waitForAllSends().then(runCallback, runCallback);
     }
   }
 }
