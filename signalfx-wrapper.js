@@ -1,21 +1,6 @@
 'use strict';
 
-const signalfx = require('signalfx');
 const sfxHelper = require('./signalfx-helper');
-
-const AUTH_TOKEN = process.env.SIGNALFX_AUTH_TOKEN;
-const TIMEOUT_MS = process.env.SIGNALFX_SEND_TIMEOUT;
-
-const API_SCHEME = process.env.SIGNALFX_API_SCHEME;
-const API_HOSTNAME = process.env.SIGNALFX_API_HOSTNAME;
-const API_PORT = process.env.SIGNALFX_API_PORT;
-
-const CLIENT_OPTIONS = {
-  ingestEndpoint: API_SCHEME + '://' + API_HOSTNAME + ':' + API_PORT
-};
-if (TIMEOUT_MS) {
-  CLIENT_OPTIONS.timeout = TIMEOUT_MS;
-}
 
 var coldStart = true;
 
@@ -68,12 +53,11 @@ class SignalFxWrapper {
 
       const after = () => {
         if (exception) {
-          // throw exception;
           this.originalCallback(exception, "Exception was thrown");
         }
         this.originalCallback(error, message);
       }
-      sfxHelper.waitForMetricRequests().then(after, after);
+      sfxHelper.waitForAllSends().then(after, after);
     }
   }
 }

@@ -4,15 +4,16 @@ SignalFx Node Lambda Wrapper.
 
 ## Testing
 Use `node-lambda` to test the wrapper locally.
-1) Install node-lambda via `npm install node-lambda`.
+1) Install node-lambda via `npm install node-lambda` and the signalfx client library via `npm install signalfx`.
 2) Create deploy.env and add the following environment variables that are required, to submit data to SignalFx:
 ```
+ SIGNALFX_AUTH_TOKEN=[token] - required
+ SIGNALFX_SEND_TIMEOUT=[millescondsToWaitForRequest]
+ # Set only all of the following or none, to use the defaults, for the ingest endpoint URL:
  SIGNALFX_API_HOSTNAME=ingest.signalfx.com
  SIGNALFX_API_PORT=443
  SIGNALFX_API_SCHEME=https
- SIGNALFX_AUTH_TOKEN=[token]
 ```
-
 3) Run `node-lambda run -f deploy.env` and see the result.
 
 ## Uploading the test package
