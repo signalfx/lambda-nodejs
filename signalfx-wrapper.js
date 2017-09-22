@@ -53,7 +53,7 @@ class SignalFxWrapper {
 
       const runCallback = () => {
         if (exception) {
-          this.originalCallback(exception, "Exception was thrown");
+          this.originalCallback(exception, 'Exception was thrown');
         }
         this.originalCallback(error, message);
       }

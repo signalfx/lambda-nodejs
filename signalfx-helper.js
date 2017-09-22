@@ -27,7 +27,7 @@ var sendPromises = [];
 
 function sendMetric(metricName, metricType, metricValue, dimensions={}) {
   if (!lambdaFunctionDimensions && lambdaFunctionContext) {
-    lambdaFunctionDimensions = {'sf_source': lambdaFunctionContext.invokedFunctionArn};
+    lambdaFunctionDimensions = {'lambda_arn': lambdaFunctionContext.invokedFunctionArn};
 
     const splitted = lambdaFunctionContext.invokedFunctionArn.split(':');
     if (splitted[2] === 'lambda') {
