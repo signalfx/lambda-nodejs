@@ -35,15 +35,12 @@ function sendMetric(metricName, metricType, metricValue, dimensions={}) {
       lambdaFunctionDimensions.aws_account_id = splitted[4];
 
       if (splitted[5] === 'function') {
-        lambdaFunctionDimensions.aws_lambda_function_name = splitted[6];
-        lambdaFunctionDimensions.aws_lambda_function_version = splitted[7] || lambdaFunctionContext.functionVersion;
+        lambdaFunctionDimensions.aws_function_name = splitted[6];
+        lambdaFunctionDimensions.aws_function_version = splitted[7] || lambdaFunctionContext.functionVersion;
       } else if (splitted[5] === 'event-source-mappings') {
         lambdaFunctionDimensions.event_source_mappings = splitted[6];
       }
     }
-
-    lambdaFunctionDimensions.aws_lambda_memory_limit = lambdaFunctionContext.memoryLimitInMB;
-    lambdaFunctionDimensions.aws_lambda_execution_env = process.env.AWS_EXECUTION_ENV
   }
 
   Object.assign(dimensions, lambdaFunctionDimensions);
@@ -55,7 +52,11 @@ function sendMetric(metricName, metricType, metricValue, dimensions={}) {
   var datapoints = {};
   datapoints[metricType] = [dp];
 
-  var sendPromise = metricSender.send(datapoints);
+  var sendPromise = metricSender.send(datapoints).catch((err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
   sendPromises.push(sendPromise);
   return sendPromise;
 }
