@@ -48,7 +48,7 @@ class SignalFxWrapper {
       sfxHelper.sendCounter('aws.lambda.error', 1);
       exception = err;
     } finally {
-      sfxHelper.sendGauge('aws.lambda.executionTime', new Date().getTime() - startTime);
+      sfxHelper.sendGauge('aws.lambda.duration', new Date().getTime() - startTime);
       sfxHelper.sendCounter('aws.lambda.complete', 1);
 
       const runCallback = () => {
