@@ -1,6 +1,6 @@
 {
   "name": "signalfx-lambda",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Node.js lambda wrapper for SignalFx",
   "homepage": "https://signalfx.com",
   "author": {
@@ -8,11 +8,16 @@
     "email": "info@signalfx.com",
     "url": "https://signalfx.com"
   },
+  "license": "Apache-2.0",
   "main": "signalfx-lambda",
-    "dependencies": {
+  "dependencies": {
     "signalfx": "5.0.0"
   },
   "bundledDependencies": [
     "signalfx"
-  ]
+  ],
+  "repository": {
+    "type" : "git",
+    "url" : ""
+  }
 }

@@ -2,44 +2,96 @@
 
 SignalFx Node Lambda Wrapper.
 
-## Testing
-Use `node-lambda` to test the wrapper locally.
-1) Install node-lambda via `npm install node-lambda` and the signalfx client library via `npm install signalfx`.
-2) Create deploy.env and add the following environment variables that are required, to submit data to SignalFx:
-```
- SIGNALFX_AUTH_TOKEN=[token] - required
- SIGNALFX_SEND_TIMEOUT=[millescondsToWaitForRequest]
- # Set either all of the following or none (to use the defaults), for the ingest endpoint URL:
- SIGNALFX_API_HOSTNAME=ingest.signalfx.com
- SIGNALFX_API_PORT=443
- SIGNALFX_API_SCHEME=https
-```
-3) Run `node-lambda run -f deploy.env` and see the result.
+## Usage
 
-## Uploading the test package
-Run `node-lambda deploy -f deploy.env` to deploy to AWS, using the environmental variables for the Lambda function configured in `.env`.
+The SignalFx NodeJS Lambda Wrapper is a wrapper around an AWS Lambda NodeJS function handler, used to instrument execution of the function and send metrics to SignalFx.
 
-## Deploy
+### Installation
+
+Use the hosted package:
+```
+{
+  "name": "my-module",
+  "dependencies": {
+    "signalfx-lambda": "https://cdn.signalfx.com/signalfx-lambda-0.0.6.tgz"
+  }
+}
+```
+
+Alternatively, download the hosted package and use it locally by a relative reference in your module's `package.json`:
+```
+{
+  "name": "my-module",
+  "dependencies": {
+    "signalfx-lambda": "file:../signalfx-lambda-0.0.6.tgz"
+  }
+}
+```
+
+### Sending a metric from the Lambda function
+
+```
+'use strict';
+
+const signalFxLambda = require('./signalfx-lambda');
+
+exports.handler = signalFxLambda.wrapper((event, context, callback) => {
+  ...
+  signalFxLambda.helper.sendGauge('gauge.name', value);
+  callback(null, 'Done');
+});
+```
+
+### Deployment
+
 Run `npm pack` to package the module with the configuration in `package.json`.
 
-## Usage of deployed package
-The module can be used locally by a relative reference in `package.json`:
+## Testing
+
+Install node-lambda via `npm install -g node-lambda` (globally) or `npm install node-lambda` (locally).
+
+### Testing locally
+
+Create deploy.env to submit data to SignalFx, containing the following environment variables:
+
+1) Set authentication token:
 ```
-{
-  "name": "signalfx-test",
-  "dependencies": {
-    "signalfx-lambda": "file:../signalfx-lambda-0.0.4.tgz"
-  }
-}
+ SIGNALFX_AUTH_TOKEN=signalfx token
 ```
 
-Alternatively, the module can be used from the hosted package:
+2) Optional parameters available:
 ```
-{
-  "name": "signalfx-test",
-  "dependencies": {
-    "signalfx-lambda": "https://cdn.signalfx.com/signalfx-lambda-0.0.4.tgz"
-  }
-}
+SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
+# Configure all of the following to set the ingest endpoint URL:
+SIGNALFX_API_HOSTNAME=[ingest.signalfx.com]
+SIGNALFX_API_PORT=[443]
+SIGNALFX_API_SCHEME=[https]
 ```
 
+3) Run `node-lambda run -f deploy.env`.
+
+## Testing from AWS
+
+Run `node-lambda deploy -f deploy.env` to deploy to AWS. It will use any environment variables configured in `.env`. Example:
+
+```
+AWS_ENVIRONMENT=
+AWS_PROFILE=
+AWS_SESSION_TOKEN=
+AWS_HANDLER=index.handler
+AWS_MEMORY_SIZE=128
+AWS_TIMEOUT=3
+AWS_DESCRIPTION=
+AWS_RUNTIME=nodejs6.10
+AWS_VPC_SUBNETS=
+AWS_VPC_SECURITY_GROUPS=
+AWS_TRACING_CONFIG=
+AWS_REGION=us-east-2
+AWS_FUNCTION_NAME=my-function
+AWS_ROLE_ARN=arn:aws:iam::someAccountId:role/someRole
+PACKAGE_DIRECTORY=build
+```
+
+### License
+
+Apache Software License v2. Copyright © 2014-2017 SignalFx
