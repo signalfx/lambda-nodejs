@@ -19,9 +19,9 @@ class SignalFxWrapper {
     this.originalCallback = originalCallback;
 
     sfxHelper.setLambdaFunctionContext(this.originalContext);
-    sfxHelper.sendCounter('aws.lambda.invocation', 1);
+    sfxHelper.sendCounter('aws.lambda.invocations', 1);
     if (coldStart) {
-      sfxHelper.sendCounter('aws.lambda.coldStart', 1);
+      sfxHelper.sendCounter('aws.lambda.coldStarts', 1);
       coldStart = false;
     }
     return this;
@@ -45,11 +45,11 @@ class SignalFxWrapper {
         customCallback
       );
     } catch (err) {
-      sfxHelper.sendCounter('aws.lambda.error', 1);
+      sfxHelper.sendCounter('aws.lambda.errors', 1);
       exception = err;
     } finally {
       sfxHelper.sendGauge('aws.lambda.duration', new Date().getTime() - startTime);
-      sfxHelper.sendCounter('aws.lambda.complete', 1);
+      sfxHelper.sendCounter('aws.lambda.completed', 1);
 
       const runCallback = () => {
         if (exception) {
