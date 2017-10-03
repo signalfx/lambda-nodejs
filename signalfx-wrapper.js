@@ -28,13 +28,31 @@ class SignalFxWrapper {
   }
 
   invoke() {
-    var exception, error, message;
+    var exception, error, message, callbackProcessed;
 
     const startTime = new Date().getTime();
+
+    const processCallback = () => {
+      if (callbackProcessed) {
+        return;
+      }
+      callbackProcessed = true;
+      sfxHelper.sendGauge('aws.lambda.duration', new Date().getTime() - startTime);
+      sfxHelper.sendCounter('aws.lambda.completed', 1);
+
+      const runCallback = () => {
+        if (exception) {
+          this.originalCallback(exception, 'Exception was thrown');
+        }
+        this.originalCallback(error, message);
+      }
+      sfxHelper.waitForAllSends().then(runCallback, runCallback);
+    }
 
     const customCallback = (err, msg) => {
       error = err;
       message = msg;
+      processCallback();
     }
 
     try {
@@ -47,17 +65,7 @@ class SignalFxWrapper {
     } catch (err) {
       sfxHelper.sendCounter('aws.lambda.errors', 1);
       exception = err;
-    } finally {
-      sfxHelper.sendGauge('aws.lambda.duration', new Date().getTime() - startTime);
-      sfxHelper.sendCounter('aws.lambda.completed', 1);
-
-      const runCallback = () => {
-        if (exception) {
-          this.originalCallback(exception, 'Exception was thrown');
-        }
-        this.originalCallback(error, message);
-      }
-      sfxHelper.waitForAllSends().then(runCallback, runCallback);
+      processCallback();
     }
   }
 }
