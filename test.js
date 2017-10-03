@@ -8,5 +8,7 @@ exports.handler = signalFxLambda.wrapper((event, context, callback) => {
   signalFxLambda.helper.sendGauge('application.performance', performance);
   console.log('Custom app metric is ' + performance);
   // callback('this is the failure');
-  callback(null, 'this is the result returned');
+  setTimeout(function() {
+  	callback(null, 'this is the result returned');
+  }, 1000);
 });
