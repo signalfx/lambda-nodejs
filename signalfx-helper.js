@@ -78,10 +78,6 @@ module.exports = {
     return sendMetric(metricName, 'counters', metricValue, dimensions);
   },
 
-  sendCumulativeCounter: function addCumulativeCounter(metricName, metricValue, dimensions) {
-    return sendMetric(metricName, 'cumulative_counters', metricValue, dimensions);
-  },
-
   waitForAllSends: function waitForAllSends() {
     return Promise.all(sendPromises).then(clearSendPromises, clearSendPromises);
   }
