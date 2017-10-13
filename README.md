@@ -62,10 +62,9 @@ Create deploy.env to submit data to SignalFx, containing the following environme
 2) Optional parameters available:
 ```
 SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
-# Configure all of the following to set the ingest endpoint URL:
-SIGNALFX_API_HOSTNAME=[ingest.signalfx.com]
-SIGNALFX_API_PORT=[443]
-SIGNALFX_API_SCHEME=[https]
+
+# Change the ingest endpoint URL:
+SIGNALFX_INGEST_ENDPOINT=[https://ingest.signalfx.com:443]
 ```
 
 3) Run `node-lambda run -f deploy.env`.

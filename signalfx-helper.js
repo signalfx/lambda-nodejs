@@ -5,13 +5,11 @@ const signalfx = require('signalfx');
 const AUTH_TOKEN = process.env.SIGNALFX_AUTH_TOKEN;
 const TIMEOUT_MS = process.env.SIGNALFX_SEND_TIMEOUT;
 
-const API_SCHEME = process.env.SIGNALFX_API_SCHEME;
-const API_HOSTNAME = process.env.SIGNALFX_API_HOSTNAME;
-const API_PORT = process.env.SIGNALFX_API_PORT;
+const INGEST_ENDPOINT = process.env.SIGNALFX_INGEST_ENDPOINT;
 
 var CLIENT_OPTIONS = {};
-if (API_SCHEME && API_HOSTNAME && API_PORT) {
-  CLIENT_OPTIONS.ingestEndpoint = API_SCHEME + '://' + API_HOSTNAME + ':' + API_PORT;
+if (INGEST_ENDPOINT) {
+  CLIENT_OPTIONS.ingestEndpoint = INGEST_ENDPOINT
 }
 
 const timeoutMs = Number(TIMEOUT_MS);
