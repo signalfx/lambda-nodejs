@@ -63,7 +63,7 @@ Create deploy.env to submit data to SignalFx, containing the following environme
 ```
 SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
 
-# The change the ingest endpoint URL:
+# Change the ingest endpoint URL:
 SIGNALFX_INGEST_ENDPOINT=[https://ingest.signalfx.com:443]
 ```
 
