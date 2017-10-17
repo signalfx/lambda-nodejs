@@ -41,11 +41,10 @@ function sendMetric(metricName, metricType, metricValue, dimensions={}) {
     }
   }
 
-  Object.assign(dimensions, lambdaFunctionDimensions);
   var dp = {
     metric: metricName,
     value: metricValue,
-    dimensions: dimensions
+    dimensions: Object.assign({}, dimensions, lambdaFunctionDimensions)
   };
   var datapoints = {};
   datapoints[metricType] = [dp];
