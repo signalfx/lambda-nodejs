@@ -17,34 +17,16 @@ if (!isNaN(timeoutMs)) {
   CLIENT_OPTIONS.timeout = timeoutMs;
 }
 
-var lambdaFunctionContext;
-var lambdaFunctionDimensions;
+var defaultDimensions;
 
 var metricSender = new signalfx.IngestJson(AUTH_TOKEN, CLIENT_OPTIONS);
 var sendPromises = [];
 
 function sendMetric(metricName, metricType, metricValue, dimensions={}) {
-  if (!lambdaFunctionDimensions && lambdaFunctionContext) {
-    lambdaFunctionDimensions = {'lambda_arn': lambdaFunctionContext.invokedFunctionArn};
-
-    const splitted = lambdaFunctionContext.invokedFunctionArn.split(':');
-    if (splitted[2] === 'lambda') {
-      lambdaFunctionDimensions.aws_region = splitted[3];
-      lambdaFunctionDimensions.aws_account_id = splitted[4];
-
-      if (splitted[5] === 'function') {
-        lambdaFunctionDimensions.aws_function_name = splitted[6];
-        lambdaFunctionDimensions.aws_function_version = splitted[7] || lambdaFunctionContext.functionVersion;
-      } else if (splitted[5] === 'event-source-mappings') {
-        lambdaFunctionDimensions.event_source_mappings = splitted[6];
-      }
-    }
-  }
-
   var dp = {
     metric: metricName,
     value: metricValue,
-    dimensions: Object.assign({}, dimensions, lambdaFunctionDimensions)
+    dimensions: Object.assign({}, dimensions, defaultDimensions)
   };
   var datapoints = {};
   datapoints[metricType] = [dp];
@@ -63,8 +45,26 @@ const clearSendPromises = () => {
 }
 
 module.exports = {
-  setLambdaFunctionContext: function setLambdaFunctionContext(context) {
-    lambdaFunctionContext = context;
+  setLambdaFunctionContext: function setLambdaFunctionContext(context, dimensions) {
+    defaultDimensions = Object.assign({}, dimensions);
+    if (context) {
+      defaultDimensions.lambda_arn = context.invokedFunctionArn;
+
+      const splitted = context.invokedFunctionArn.split(':');
+      if (splitted[2] === 'lambda') {
+        defaultDimensions.aws_function_name = context.functionName;
+        defaultDimensions.aws_function_version = context.functionVersion;
+
+        defaultDimensions.aws_region = splitted[3];
+        defaultDimensions.aws_account_id = splitted[4];
+
+        if (splitted[5] === 'function') {
+          defaultDimensions.aws_function_qualifier = splitted[7];
+        } else if (splitted[5] === 'event-source-mappings') {
+          defaultDimensions.event_source_mappings = splitted[6];
+        }
+      }
+    }
   },
 
   sendGauge: function addGauge(metricName, metricValue, dimensions) {

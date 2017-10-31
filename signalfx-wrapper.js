@@ -10,7 +10,8 @@ class SignalFxWrapper {
     originalFn,
     originalEvent,
     originalContext,
-    originalCallback
+    originalCallback,
+    dimensions
   ) {
     this.originalObj = originalObj;
     this.originalFn = originalFn;
@@ -18,7 +19,7 @@ class SignalFxWrapper {
     this.originalContext = originalContext;
     this.originalCallback = originalCallback;
 
-    sfxHelper.setLambdaFunctionContext(this.originalContext);
+    sfxHelper.setLambdaFunctionContext(this.originalContext, dimensions);
     sfxHelper.sendCounter('aws.lambda.invocations', 1);
     if (coldStart) {
       sfxHelper.sendCounter('aws.lambda.coldStarts', 1);
@@ -38,7 +39,6 @@ class SignalFxWrapper {
       }
       callbackProcessed = true;
       sfxHelper.sendGauge('aws.lambda.duration', new Date().getTime() - startTime);
-      sfxHelper.sendCounter('aws.lambda.completed', 1);
 
       const runCallback = () => {
         if (exception) {
@@ -70,7 +70,7 @@ class SignalFxWrapper {
   }
 }
 
-module.exports = originalFn => {
+module.exports = (originalFn, dimensions) => {
   return function customHandler(
     originalEvent,
     originalContext,
@@ -82,7 +82,8 @@ module.exports = originalFn => {
       originalFn,
       originalEvent,
       originalContext,
-      originalCallback
+      originalCallback,
+      dimensions
     ).invoke();
   };
 };
