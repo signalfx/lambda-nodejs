@@ -2,6 +2,8 @@
 
 const signalfx = require('signalfx');
 
+const packageFile = require('./package.json')
+
 const AUTH_TOKEN = process.env.SIGNALFX_AUTH_TOKEN;
 const TIMEOUT_MS = process.env.SIGNALFX_SEND_TIMEOUT;
 
@@ -65,6 +67,11 @@ module.exports = {
         }
       }
     }
+    if (process.env.AWS_EXECUTION_ENV) {
+      defaultDimensions.aws_execution_env = process.env.AWS_EXECUTION_ENV;
+    }
+    defaultDimensions.function_wrapper_version = packageFile.name + '-' + packageFile.version;
+    defaultDimensions.metric_source = 'lambda_wrapper';
   },
 
   sendGauge: function addGauge(metricName, metricValue, dimensions) {
