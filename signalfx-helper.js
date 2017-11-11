@@ -62,8 +62,12 @@ module.exports = {
 
         if (splitted[5] === 'function') {
           defaultDimensions.aws_function_qualifier = splitted[7];
+          const updatedArn = splitted.slice();
+          updatedArn[7] = context.functionVersion;
+          defaultDimensions.lambda_arn = updatedArn.join(':');
         } else if (splitted[5] === 'event-source-mappings') {
           defaultDimensions.event_source_mappings = splitted[6];
+          defaultDimensions.lambda_arn = context.invokedFunctionArn;
         }
       }
     }
