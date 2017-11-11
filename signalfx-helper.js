@@ -12,11 +12,15 @@ const INGEST_ENDPOINT = process.env.SIGNALFX_INGEST_ENDPOINT;
 var CLIENT_OPTIONS = {};
 if (INGEST_ENDPOINT) {
   CLIENT_OPTIONS.ingestEndpoint = INGEST_ENDPOINT
+} else {
+  CLIENT_OPTIONS.ingestEndpoint = 'https://pops.ingest.signalfx.com'
 }
 
 const timeoutMs = Number(TIMEOUT_MS);
 if (!isNaN(timeoutMs)) {
   CLIENT_OPTIONS.timeout = timeoutMs;
+} else {
+  CLIENT_OPTIONS.timeout = 300;
 }
 
 var defaultDimensions;
