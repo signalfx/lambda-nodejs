@@ -54,8 +54,6 @@ module.exports = {
   setLambdaFunctionContext: function setLambdaFunctionContext(context, dimensions) {
     defaultDimensions = Object.assign({}, dimensions);
     if (context) {
-      defaultDimensions.lambda_arn = context.invokedFunctionArn;
-
       const splitted = context.invokedFunctionArn.split(':');
       if (splitted[2] === 'lambda') {
         defaultDimensions.aws_function_name = context.functionName;
