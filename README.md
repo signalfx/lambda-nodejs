@@ -13,17 +13,7 @@ Use the hosted package:
 {
   "name": "my-module",
   "dependencies": {
-    "signalfx-lambda": "https://cdn.signalfx.com/signalfx-lambda-0.0.9.tgz"
-  }
-}
-```
-
-Alternatively, download the hosted package and use it locally by a relative reference in your module's `package.json`:
-```
-{
-  "name": "my-module",
-  "dependencies": {
-    "signalfx-lambda": "file:../signalfx-lambda-0.0.9.tgz"
+    "signalfx-lambda": "^0.0.10"
   }
 }
 ```
