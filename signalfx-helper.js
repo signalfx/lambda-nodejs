@@ -12,11 +12,15 @@ const INGEST_ENDPOINT = process.env.SIGNALFX_INGEST_ENDPOINT;
 var CLIENT_OPTIONS = {};
 if (INGEST_ENDPOINT) {
   CLIENT_OPTIONS.ingestEndpoint = INGEST_ENDPOINT
+} else {
+  CLIENT_OPTIONS.ingestEndpoint = 'https://pops.ingest.signalfx.com'
 }
 
 const timeoutMs = Number(TIMEOUT_MS);
 if (!isNaN(timeoutMs)) {
   CLIENT_OPTIONS.timeout = timeoutMs;
+} else {
+  CLIENT_OPTIONS.timeout = 300;
 }
 
 var defaultDimensions;
@@ -50,8 +54,6 @@ module.exports = {
   setLambdaFunctionContext: function setLambdaFunctionContext(context, dimensions) {
     defaultDimensions = Object.assign({}, dimensions);
     if (context) {
-      defaultDimensions.lambda_arn = context.invokedFunctionArn;
-
       const splitted = context.invokedFunctionArn.split(':');
       if (splitted[2] === 'lambda') {
         defaultDimensions.aws_function_name = context.functionName;
@@ -62,8 +64,12 @@ module.exports = {
 
         if (splitted[5] === 'function') {
           defaultDimensions.aws_function_qualifier = splitted[7];
+          const updatedArn = splitted.slice();
+          updatedArn[7] = context.functionVersion;
+          defaultDimensions.lambda_arn = updatedArn.join(':');
         } else if (splitted[5] === 'event-source-mappings') {
           defaultDimensions.event_source_mappings = splitted[6];
+          defaultDimensions.lambda_arn = context.invokedFunctionArn;
         }
       }
     }
