@@ -13,7 +13,7 @@ var CLIENT_OPTIONS = {};
 if (INGEST_ENDPOINT) {
   CLIENT_OPTIONS.ingestEndpoint = INGEST_ENDPOINT
 } else {
-  CLIENT_OPTIONS.ingestEndpoint = 'https://pops.ingest.signalfx.com'
+  CLIENT_OPTIONS.ingestEndpoint = 'https://pops.signalfx.com'
 }
 
 const timeoutMs = Number(TIMEOUT_MS);
