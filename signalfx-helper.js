@@ -23,9 +23,8 @@ if (!isNaN(timeoutMs)) {
   CLIENT_OPTIONS.timeout = 300;
 }
 
-var defaultDimensions;
+var defaultDimensions, metricSender;
 
-var metricSender = new signalfx.IngestJson(AUTH_TOKEN, CLIENT_OPTIONS);
 var sendPromises = [];
 
 function sendMetric(metricName, metricType, metricValue, dimensions={}) {
@@ -50,7 +49,12 @@ const clearSendPromises = () => {
   sendPromises = [];
 }
 
+function setAccessToken(accessToken) {
+  metricSender = new signalfx.IngestJson(accessToken || AUTH_TOKEN, CLIENT_OPTIONS);
+} 
+
 module.exports = {
+  setAccessToken: setAccessToken,
   setLambdaFunctionContext: function setLambdaFunctionContext(context, dimensions) {
     defaultDimensions = Object.assign({}, dimensions);
     if (context) {
