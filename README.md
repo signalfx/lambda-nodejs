@@ -18,6 +18,32 @@ Use the hosted package:
 }
 ```
 
+Wrap your function handler
+```
+'use strict';
+
+const signalFxLambda = require('signalfx-lambda');
+
+exports.handler = signalFxLambda.wrapper((event, context, callback) => {
+  ...
+});
+```
+
+
+### Environment Variables
+
+```
+ SIGNALFX_AUTH_TOKEN=signalfx token
+```
+
+Optional parameters available:
+```
+SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
+
+# Change the ingest endpoint URL:
+SIGNALFX_INGEST_ENDPOINT=[https://pops.signalfx.com:443]
+```
+
 ### Metrics and dimensions sent by the wrapper
 
 The Lambda wrapper sends the following metrics to SignalFx:
@@ -68,22 +94,9 @@ Install node-lambda via `npm install -g node-lambda` (globally) or `npm install 
 
 ### Testing locally
 
-Create deploy.env to submit data to SignalFx, containing the following environment variables:
+1) Create deploy.env to submit data to SignalFx, containing the required and optional environment variables mentioned above:
 
-1) Set authentication token:
-```
- SIGNALFX_AUTH_TOKEN=signalfx token
-```
-
-2) Optional parameters available:
-```
-SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
-
-# Change the ingest endpoint URL:
-SIGNALFX_INGEST_ENDPOINT=[https://ingest.signalfx.com:443]
-```
-
-3) Run `node-lambda run -f deploy.env`.
+2) Run `node-lambda run -f deploy.env`.
 
 ## Testing from AWS
 

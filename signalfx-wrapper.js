@@ -11,7 +11,8 @@ class SignalFxWrapper {
     originalEvent,
     originalContext,
     originalCallback,
-    dimensions
+    dimensions,
+    accessToken
   ) {
     this.originalObj = originalObj;
     this.originalFn = originalFn;
@@ -19,6 +20,7 @@ class SignalFxWrapper {
     this.originalContext = originalContext;
     this.originalCallback = originalCallback;
 
+    sfxHelper.setAccessToken(accessToken);
     sfxHelper.setLambdaFunctionContext(this.originalContext, dimensions);
     sfxHelper.sendCounter('function.invocations', 1);
     if (coldStart) {
@@ -70,7 +72,7 @@ class SignalFxWrapper {
   }
 }
 
-module.exports = (originalFn, dimensions) => {
+module.exports = (originalFn, dimensions, accessToken) => {
   return function customHandler(
     originalEvent,
     originalContext,
@@ -83,7 +85,8 @@ module.exports = (originalFn, dimensions) => {
       originalEvent,
       originalContext,
       originalCallback,
-      dimensions
+      dimensions,
+      accessToken
     ).invoke();
   };
 };
