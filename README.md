@@ -41,7 +41,7 @@ Optional parameters available:
 SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
 
 # Change the ingest endpoint URL:
-SIGNALFX_INGEST_ENDPOINT=[https://pops.signalfx.com:443]
+SIGNALFX_INGEST_ENDPOINT=[https://pops.signalfx.com]
 ```
 
 ### Metrics and dimensions sent by the wrapper
