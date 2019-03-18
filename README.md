@@ -29,6 +29,17 @@ exports.handler = signalFxLambda.wrapper((event, context, callback) => {
 });
 ```
 
+Using async/await,
+```
+'use strict';
+
+const signalFxLambda = require('signalfx-lambda');
+
+exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
+  ...
+});
+```
+
 
 ### Environment Variables
 
@@ -84,6 +95,18 @@ exports.handler = signalFxLambda.wrapper((event, context, callback) => {
 });
 ```
 
+Using async/await
+```
+'use strict';
+
+const signalFxLambda = require('signalfx-lambda');
+
+exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
+  ...
+  signalFxLambda.helper.sendGauge('gauge.name', value);
+});
+```
+
 ### Deployment
 
 Run `npm pack` to package the module with the configuration in `package.json`.
@@ -110,7 +133,7 @@ AWS_HANDLER=index.handler
 AWS_MEMORY_SIZE=128
 AWS_TIMEOUT=3
 AWS_DESCRIPTION=
-AWS_RUNTIME=nodejs6.10
+AWS_RUNTIME=nodejs6.10 # Use nodejs8.10 when use async/await
 AWS_VPC_SUBNETS=
 AWS_VPC_SECURITY_GROUPS=
 AWS_TRACING_CONFIG=
