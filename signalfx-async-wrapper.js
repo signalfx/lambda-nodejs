@@ -55,7 +55,7 @@ class SignalFxWrapper {
       sfxHelper.sendCounter('function.errors', 1);
       await processCallback();
 
-      // should just return js exception instead of doing additional process: https://aws.amazon.com/blogs/compute/node-js-8-10-runtime-now-available-in-aws-lambda/
+      // should just return js exception instead of doing additional processing: https://aws.amazon.com/blogs/compute/node-js-8-10-runtime-now-available-in-aws-lambda/
       return err;
     }
 
