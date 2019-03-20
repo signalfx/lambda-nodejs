@@ -10,6 +10,7 @@ class SignalFxWrapper {
     originalFn,
     originalEvent,
     originalContext,
+    originalCallback,
     dimensions,
     accessToken
   ) {
@@ -17,6 +18,7 @@ class SignalFxWrapper {
     this.originalFn = originalFn;
     this.originalEvent = originalEvent;
     this.originalContext = originalContext;
+    this.originalCallback = originalCallback;
 
     sfxHelper.setAccessToken(accessToken);
     sfxHelper.setLambdaFunctionContext(this.originalContext, dimensions);
@@ -29,31 +31,38 @@ class SignalFxWrapper {
   }
 
   async invoke() {
-    let callbackProcessed;
     const startTime = new Date().getTime();
-
-    const processCallback = async () => {
-      if (callbackProcessed) {
+    let sent;
+    const sendDuration = async () => {
+      if (sent) {
         return;
       }
-      callbackProcessed = true;
+
       sfxHelper.sendGauge('function.duration', new Date().getTime() - startTime);
+      sent = true;
 
       await sfxHelper.waitForAllSends();
     }
+
+    const callbackWrapper = (err, result) => {
+      sendDuration().then(() => {
+        this.originalCallback(err, result);
+      })
+    };
 
     let result;
     try {
       result = await this.originalFn.call(
         this.originalObj,
         this.originalEvent,
-        this.originalContext
+        this.originalContext,
+        callbackWrapper
       );
 
-      await processCallback();
+      await sendDuration();
     } catch (err) {
       sfxHelper.sendCounter('function.errors', 1);
-      await processCallback();
+      await sendDuration();
 
       // should just return js exception instead of doing additional processing: https://aws.amazon.com/blogs/compute/node-js-8-10-runtime-now-available-in-aws-lambda/
       return err;
@@ -64,7 +73,7 @@ class SignalFxWrapper {
 }
 
 module.exports = (originalFn, dimensions, accessToken) => {
-  return async function (originalEvent, originalContext) {
+  return async function (originalEvent, originalContext, originalCallback) {
     const self = this;
 
     const signalFxWrapper = new SignalFxWrapper(
@@ -72,6 +81,7 @@ module.exports = (originalFn, dimensions, accessToken) => {
       originalFn,
       originalEvent,
       originalContext,
+      originalCallback,
       dimensions,
       accessToken
     );
