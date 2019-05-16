@@ -13,7 +13,7 @@ Use the hosted package:
 {
   "name": "my-module",
   "dependencies": {
-    "signalfx-lambda": "^0.0.11"
+    "signalfx-lambda": "^0.0.12"
   }
 }
 ```
