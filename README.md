@@ -81,18 +81,17 @@ To locate your realm:
 
 1. Set SIGNALFX_ACCESS_TOKEN with your correct access token. Review the following example. 
 
-.. code:: bash
-
-    SIGNALFX_ACCESS_TOKEN=access token
-
+```
+SIGNALFX_ACCESS_TOKEN=access token
+```
 
 2. If you use POPS, Smart Gateway, or want to ingest directly from a realm other than us0, then you must set at least one endpoint variable. (For environment variables, SignalFx defaults to the us0 realm. As a result, if you are not in the us0 realm, you may need to set your environment variables.) You can update one of the variables below. Review the following examples.  
 
-.. code:: bash
-
+```
     SIGNALFX_ENDPOINT_URL=http://<my_gateway>:8080
     SIGNALFX_METRICS_URL=ingest endpoint [ default: https://pops.signalfx.com ]
-    
+```
+
 To learn more, see: 
   * [SignalFx Point of Presence Service (POPS)](https://docs.signalfx.com/en/latest/integrations/integrations-reference/integrations.signalfx.point.of.presence.service.(pops).html)
   * [Deploying the SignalFx Smart Gateway](https://docs.signalfx.com/en/latest/apm/apm-deployment/smart-gateway.html)
@@ -100,11 +99,11 @@ To learn more, see:
     
 3. (Optional) Set additional environment variable. Review the following examples.  
 
-.. code:: bash
-
+```
     SIGNALFX_SEND_TIMEOUT=timeout in seconds for sending datapoint [ default: 0.3 ]
     SIGNALFX_TRACING_URL=tracing endpoint [ default: https://ingest.signalfx.com/v1/trace ]
-    
+```
+
 ## Step 4: Wrap a function
 
 1. Wrap your function handler:
