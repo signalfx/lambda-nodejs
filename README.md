@@ -26,7 +26,7 @@ To add the SignalFx wrapper, you have the following options:
 
 In this option, you will use a Lambda layer created and hosted by SignalFx.
 
-1. To verify compatibility, review the list of supported regions. See [Lambda Layer Versions](https://github.com/signalfx/lambda-layer-versions/blob/master/python/PYTHON.md).
+1. To verify compatibility, review the list of supported regions. See [Lambda Layer Versions](https://github.com/signalfx/lambda-layer-versions/blob/master/node/NODE.md).
 2. Open your AWS console. 
 3. In the landing page, under **Compute**, click **Lambda**.
 4. Click **Create function** to create a layer with SignalFx's capabilities.
@@ -37,7 +37,7 @@ In this option, you will use a Lambda layer created and hosted by SignalFx.
 9. Click on **Layers**, then add a layer.
 10. Mark **Provide a layer version**.
 11. Enter an ARN number. 
-   * To locate the ARN number, see [Lambda Layer Versions](https://github.com/signalfx/lambda-layer-versions/blob/master/python/PYTHON.md).
+   * To locate the ARN number, see [Lambda Layer Versions](https://github.com/signalfx/lambda-layer-versions/blob/master/node/NODE.md).
 
 ### Option 2: Create a Lambda function, then create and attach a layer based on a SignalFx template
 
@@ -79,29 +79,38 @@ To locate your realm:
 
 ## Step 3: Set environment variables
 
-1. Set SIGNALFX_ACCESS_TOKEN with your correct access token. Review the following example. 
+1. Set SIGNALFX_AUTH_TOKEN with your correct authorization token. Review the following example. 
 
 ```
-SIGNALFX_ACCESS_TOKEN=access token
+   SIGNALFX_AUTH_TOKEN=signalfx token
 ```
 
-2. If you use POPS, Smart Gateway, or want to ingest directly from a realm other than us0, then you must set at least one endpoint variable. (For environment variables, SignalFx defaults to the us0 realm. As a result, if you are not in the us0 realm, you may need to set your environment variables.) You can update one of the variables below. Review the following examples.  
+2. If you use POPS, Smart Gateway, or want to ingest directly from a realm other than us0, then you must set at least one endpoint variable. (For environment variables, SignalFx defaults to the us0 realm. As a result, if you are not in the us0 realm, you may need to set your environment variables.) There are two options: 
+
+**Option 1**
 
 ```
-    SIGNALFX_ENDPOINT_URL=http://<my_gateway>:8080
-    SIGNALFX_METRICS_URL=ingest endpoint [ default: https://pops.signalfx.com ]
+    SIGNALFX_INGEST_ENDPOINT=[https://pops.signalfx.com]
 ```
 
+**Option 2**
+
+You can update ``SIGNALFX_INGEST_ENDPOINT`` and ``SIGNALFX_METRICS_URL`` where traces will be sent to the gateway and metrics will go through POPS, respectively. 
+
+.. code:: bash
+
+    SIGNALFX_METRICS_URL=https://pops.signalfx.com
+    SIGNALFX_INGEST_ENDPOINT=https://pops.signalfx.com
+    
 To learn more, see: 
   * [SignalFx Point of Presence Service (POPS)](https://docs.signalfx.com/en/latest/integrations/integrations-reference/integrations.signalfx.point.of.presence.service.(pops).html)
   * [Deploying the SignalFx Smart Gateway](https://docs.signalfx.com/en/latest/apm/apm-deployment/smart-gateway.html)
         
     
-3. (Optional) Set additional environment variable. Review the following examples.  
+3. (Optional) Set additional environment variable. Review the following example.  
 
 ```
-    SIGNALFX_SEND_TIMEOUT=timeout in seconds for sending datapoint [ default: 0.3 ]
-    SIGNALFX_TRACING_URL=tracing endpoint [ default: https://ingest.signalfx.com/v1/trace ]
+    SIGNALFX_SEND_TIMEOUT=timeout in milliseconds for sending datapoint 
 ```
 
 ## Step 4: Wrap a function
@@ -130,21 +139,21 @@ exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
 });
 ```
 
-## Step 5: Deploy the function 
+## Step 5: (Optional) Deploy the function 
 
 1. Run `npm pack` to package the module with the configuration in `package.json`.
 
-## Step 6: Test the function 
+## Step 6: (Optional) Test the function 
 
 1. Install node-lambda via `npm install -g node-lambda` (globally) or `npm install node-lambda` (locally).
 
-## Step 7: Test locally 
+## Step 7: (Optional) Test locally 
 
 1. Create deploy.env to submit data to SignalFx, containing the required and optional environment variables mentioned above:
 
 2. Run `node-lambda run -f deploy.env`.
 
-## Step 8: Test from AWS 
+## Step 8: (Optional) Test from AWS 
 
 1. Run `node-lambda deploy -f deploy.env` to deploy to AWS. It will use any environment variables configured in `.env`. Example:
 
