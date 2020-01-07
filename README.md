@@ -1,12 +1,12 @@
-# SignalFx Node Lambda Wrapper
+# SignalFx Node.js Lambda Wrapper
 
 ## Overview 
 
-You can use this document to add a SignalFx wrapper to your AWS Lambda for Node. 
+You can use this document to add a SignalFx wrapper to your AWS Lambda for Node.js. 
 
-The SignalFx Node Lambda Wrapper wraps around an AWS Lambda Node function handler, which allows metrics to be sent to SignalFx.
+The SignalFx Node.js Lambda Wrapper wraps around an AWS Lambda Node.js function handler, which allows metrics to be sent to SignalFx.
 
-At a high-level, to add a SignalFx Node Lambda wrapper, you can package the code yourself, or you can use a Lambda layer containing the wrapper and then attach the layer to a Lambda function.
+At a high-level, to add a SignalFx Node.js Lambda wrapper, you can package the code yourself, or you can use a Lambda layer containing the wrapper and then attach the layer to a Lambda function.
 
 To learn more about Lambda Layers, please visit the AWS documentation site and see [AWS Lambda Layers](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 
@@ -67,7 +67,7 @@ Run the following installation script in your command line to install latest ver
 
     npm install signalfx-lambda
     
-Make sure the package is saved to your package.json (never versions of npm do this automatically).
+Make sure the package is saved to your package.json (newer versions of npm do this automatically).
 
 ## Step 2: Locate ingest endpoint
 
@@ -172,7 +172,7 @@ The Lambda wrapper adds the following dimensions to all data points sent to Sign
 | aws_function_version  | AWS Function Version |
 | aws_function_qualifier  | AWS Function Version Qualifier (version or version alias if it is not an event source mapping Lambda invocation) |
 | event_source_mappings  | AWS Function Name (if it is an event source mapping Lambda invocation) |
-| aws_execution_env  | AWS execution environment (e.g. AWS_Lambda_nodejs6.10) |
+| aws_execution_env  | AWS execution environment (e.g. AWS_Lambda_nodejs10.x) |
 | function_wrapper_version  | SignalFx function wrapper qualifier (e.g. signalfx-lambda-0.0.9) |
 | metric_source | The literal value of 'lambda_wrapper' |
 
