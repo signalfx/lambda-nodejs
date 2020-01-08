@@ -31,7 +31,7 @@ For advanced users (to reduce size of deployment packages):
 
 In this option, you will use a Lambda layer created and hosted by SignalFx.
 
-1. To verify compatibility, review the list of supported regions. See [Lambda Layer Versions](https://github.com/signalfx/lambda-layer-versions/blob/master/nodejs/NODE.md).
+1. To verify compatibility, review the list of supported regions. See [Lambda Layer Versions](https://github.com/signalfx/lambda-layer-versions/blob/master/node/NODE.md).
 2. Open your AWS console. 
 3. In the landing page, under **Compute**, click **Lambda**.
 4. Click **Create function** to create a layer with SignalFx's capabilities.
@@ -42,7 +42,7 @@ In this option, you will use a Lambda layer created and hosted by SignalFx.
 9. Click on **Layers**, then add a layer.
 10. Mark **Provide a layer version**.
 11. Enter an ARN number. 
-  * To locate the ARN number, see [Lambda Layer Versions](https://github.com/signalfx/lambda-layer-versions/blob/master/nodejs/NODE.md).
+  * To locate the ARN number, see [Lambda Layer Versions](https://github.com/signalfx/lambda-layer-versions/blob/master/node/NODE.md).
 
 ### Option 2: Create a Lambda function, then create and attach a layer based on a SignalFx template
 
@@ -59,14 +59,12 @@ In this option, you will choose a SignalFx template, and then deploy a copy of t
 8. Return to the previous screen to add a layer to the function, select from list of runtime compatible layers, and then select the name of the copy. 
 
 ### Option 3: Install the wrapper package with npm
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Run the following installation script in your command line to install latest version of the wrapper:
 
-.. code::
-
-    npm install signalfx-lambda
-    
+```javascript
+npm install signalfx-lambda
+```    
 Make sure the package is saved to your package.json (newer versions of npm do this automatically).
 
 ## Step 2: Locate ingest endpoint
@@ -79,24 +77,22 @@ To locate your realm:
 2. Click **My Profile**.
 3. Next to **Organizations**, review the listed realm.
 
-You will use the endpoint to set SIGNALFX_INGEST_ENDPOINT variable in the next step.
+You will use the realm subdomain to set SIGNALFX_INGEST_ENDPOINT variable in the next step.
 
 ## Step 3: Set environment variables
 
 1. Set SIGNALFX_AUTH_TOKEN with your correct access token. Review the following example. 
-
-```
- SIGNALFX_AUTH_TOKEN=signalfx token
-```
-2. Set the ingest endpoint URL (remember to use appropriate realm):
-
-```
-SIGNALFX_INGEST_ENDPOINT=[https://pops.signalfx.com]
-```
+    ```bash
+     SIGNALFX_AUTH_TOKEN=signalfx token
+    ```
+2. Set the ingest endpoint URL (remember to use correct the domain corresponding to your realm):
+    ```bash
+    SIGNALFX_INGEST_ENDPOINT=[https://pops.signalfx.com]
+    ```
 3. Change SIGNALFX_SEND_TIMEOUT (optional):
-```
-SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
-```
+    ```bash
+    SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
+    ```
 
 ## Step 4: Wrap a function
       
