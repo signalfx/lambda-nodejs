@@ -6,9 +6,11 @@ You can use this document to add a SignalFx wrapper to your AWS Lambda for Node.
 
 The SignalFx Node.js Lambda Wrapper wraps around an AWS Lambda Node.js function handler, which allows metrics to be sent to SignalFx.
 
-At a high-level, to add a SignalFx Node.js Lambda wrapper, you can package the code yourself, or you can use a Lambda layer containing the wrapper and then attach the layer to a Lambda function.
+At a high-level, to add a SignalFx Node.js Lambda wrapper, you can:
+   * Package the code yourself; or
+   * Use a Lambda layer containing the wrapper, and then attach the layer to a Lambda function.
 
-To learn more about Lambda Layers, please visit the AWS documentation site and see [AWS Lambda Layers](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+To learn more about Lambda Layers, please visit the [AWS documentation site](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 
 ## Step 1: Add the Lambda wrapper in AWS
 
@@ -22,10 +24,7 @@ To add the SignalFx wrapper, you have the following options:
       * In this option, you will choose a SignalFx template, and then deploy a copy of the layer.
    * Option 3: Use the wrapper as a regular dependency, and then create a Lambda function based on your artifact containing both code and dependencies.
    
-For advanced users (to reduce size of deployment packages):
-   * Option 4: Use the wrapper as developer dependency but in production provide it in the layer in the Lambda environment. 
-   This option allows you to conveniently work with the wrapper in the local setting and reduce the size of deployment package at the same time. 
-   It can be achieved by combining information from Options listed above and will not be explained in this README.
+For advanced users who want to reduce the size of deployment packages, you can use the wrapper as a developer dependency, but in production, you would add the wrapper to layer in the Lambda environment. This option allows you to work with the wrapper in a local setting and reduce the size of deployment packages at the same time. Please note that this option is not fully documented. 
 
 ### Option 1: Create a Lambda function, then attach the SignalFx-hosted Lambda layer
 
@@ -39,7 +38,7 @@ In this option, you will use a Lambda layer created and hosted by SignalFx.
 6. In **Function name**, enter a descriptive name for the wrapper. 
 7. In **Runtime**, select the desired language.
 8. Click **Create function**. 
-9. Click on **Layers**, then add a layer.
+9. Click **Layers**, then add a layer.
 10. Mark **Provide a layer version**.
 11. Enter an ARN number. 
   * To locate the ARN number, see [Lambda Layer Versions](https://github.com/signalfx/lambda-layer-versions/blob/master/node/NODE.md).
@@ -65,11 +64,11 @@ Run the following installation script in your command line to install latest ver
 ```javascript
 npm install signalfx-lambda
 ```    
-Make sure the package is saved to your package.json (newer versions of npm do this automatically).
+Make sure the package is saved to your package.json. (Newer versions of npm perform this function automatically.)
 
-## Step 2: Locate ingest endpoint
+## Step 2: Locate the ingest endpoint
 
-By default, this function wrapper will send data to the us0 realm. As a result, if you are not in us0 realm and you want to use the ingest endpoint directly, then you must explicitly set your realm. To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu0.signalfx.com.
+By default, this function wrapper will send data to the us0 realm. As a result, if you are not in the us0 realm and you want to use the ingest endpoint directly, then you must explicitly set your realm. 
 
 To locate your realm:
 
@@ -77,7 +76,7 @@ To locate your realm:
 2. Click **My Profile**.
 3. Next to **Organizations**, review the listed realm.
 
-You will use the realm subdomain to set SIGNALFX_INGEST_ENDPOINT variable in the next step.
+To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu0.signalfx.com. You will use the realm subdomain to set SIGNALFX_INGEST_ENDPOINT variable in the next step.
 
 ## Step 3: Set environment variables
 
@@ -85,18 +84,18 @@ You will use the realm subdomain to set SIGNALFX_INGEST_ENDPOINT variable in the
     ```bash
      SIGNALFX_AUTH_TOKEN=signalfx token
     ```
-2. Set the ingest endpoint URL (remember to use correct the domain corresponding to your realm):
+2. Set the ingest endpoint URL with the domain that corresponds to your realm. Review the following example.   
     ```bash
     SIGNALFX_INGEST_ENDPOINT=[https://pops.signalfx.com]
     ```
-3. Change SIGNALFX_SEND_TIMEOUT (optional):
+3. (Optional) Update SIGNALFX_SEND_TIMEOUT. Review the following example. 
     ```bash
     SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
     ```
 
 ## Step 4: Wrap a function
       
-Wrap your function handler
+1. Wrap your function handler. Review the following example.  
 ```
 'use strict';
 
@@ -107,7 +106,7 @@ exports.handler = signalFxLambda.wrapper((event, context, callback) => {
 });
 ```
 
-Using async/await,
+2. Use async/await. Review the following example.  
 ```
 'use strict';
 
@@ -118,7 +117,9 @@ exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
 });
 ```
 
-## Step 5: Send custom metrics from a Lambda function (optional)
+## (Optional) Step 5: Send custom metrics from a Lambda function
+
+1. Wrap your function handler. Review the following example. 
 
 ```
 'use strict';
@@ -132,7 +133,7 @@ exports.handler = signalFxLambda.wrapper((event, context, callback) => {
 });
 ```
 
-Using async/await
+2. Use `async/await`. Review the following example. 
 ```
 'use strict';
 
@@ -144,7 +145,7 @@ exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
 });
 ```
 
-## Additional information
+## Additional information and optional steps
 
 ### Metrics and dimensions sent by the wrapper
 
@@ -175,21 +176,21 @@ The Lambda wrapper adds the following dimensions to all data points sent to Sign
 
 ### Deployment
 
-Run `npm pack` to package the module with the configuration in `package.json`.
+1. Run `npm pack` to package the module with the configuration in `package.json`.
 
-### Testing
+### Test
 
-Install node-lambda via `npm install -g node-lambda` (globally) or `npm install node-lambda` (locally).
+1. Install node-lambda via `npm install -g node-lambda` (globally) or `npm install node-lambda` (locally).
 
-#### Testing locally
+#### Test locally
 
-1) Create deploy.env to submit data to SignalFx, containing the required and optional environment variables mentioned above:
+1. Create deploy.env to submit data to SignalFx, which will include the required and optional environment variables mentioned above.
 
-2) Run `node-lambda run -f deploy.env`.
+2. Run `node-lambda run -f deploy.env`.
 
-#### Testing from AWS
+#### Test from AWS
 
-Run `node-lambda deploy -f deploy.env` to deploy to AWS. It will use any environment variables configured in `.env`. Example:
+1. Run `node-lambda deploy -f deploy.env` to deploy to AWS, which will use any environment variables configured in `.env`. For example: 
 
 ```
 AWS_ENVIRONMENT=
