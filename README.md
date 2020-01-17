@@ -211,4 +211,4 @@ PACKAGE_DIRECTORY=build
 
 ### License
 
-Apache Software License v2. Copyright © 2014-2020 SignalFx
+Apache Software License v2. Copyright © 2014-2020 Splunk, Inc.
