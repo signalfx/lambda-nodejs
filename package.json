@@ -13,11 +13,21 @@
   "dependencies": {
     "signalfx": "5.0.0"
   },
+  "devDependencies": {
+    "jasmine": "3.5.0",
+    "sinon": "9.0.0",
+    "chai": "4.2.0",
+    "jasmine-terminal-reporter": "1.0.3",
+    "mock-require": "3.0.3"
+  },
   "bundledDependencies": [
     "signalfx"
   ],
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/signalfx/lambda-nodejs"
+    "type": "git",
+    "url": "https://github.com/signalfx/lambda-nodejs"
+  },
+  "scripts": {
+    "test": "node node_modules/jasmine/bin/jasmine.js --config=spec/config/jasmine.json"
   }
 }
