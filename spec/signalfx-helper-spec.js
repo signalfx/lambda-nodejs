@@ -4,10 +4,7 @@ const chai = require("chai");
 const expect = chai.expect;
 
 // mock signalfx dependency
-const SEND_FUNCTION_STUB = sinon.stub();
-SEND_FUNCTION_STUB.returns(new Promise(function(resolve, reject){
-  resolve();
-}));
+const SEND_FUNCTION_STUB = sinon.stub().returns(Promise.resolve());
 
 class DummyIngestJson {
   constructor() {
@@ -18,20 +15,20 @@ class DummyIngestJson {
 mock('signalfx', { IngestJson: DummyIngestJson});
 
 // require helper after singalfx is mocked
-var signalfxHelper = require('../signalfx-helper');
+const signalfxHelper = require('../signalfx-helper');
 
 
-describe("signalfx-helper", function() {
+describe("signalfx-helper", () => {
 
   const LAMBDA_ARN = "arn:aws:lambda:us-east-2:123456789012:function:test-cw-events";
   const CONTEXT_DIMENSIONS = {sampleDimension: "test", otherDimension: "otherTest"};
 
-  beforeEach(function() {
+  beforeEach(() => {
     signalfxHelper.setAccessToken("aaaaaaaaaaa");
     signalfxHelper.setLambdaFunctionContext({invokedFunctionArn: LAMBDA_ARN}, CONTEXT_DIMENSIONS);
   });
 
-  it("should send a counter with correct name, value and dimension", function() {
+  it("should send a counter with correct name, value and dimension", () => {
     const METRIC_NAME = "sampleMetricName";
     const METRIC_VALUE = 10;
 
