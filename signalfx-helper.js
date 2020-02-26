@@ -1,15 +1,18 @@
 'use strict';
 
 const signalfx = require('signalfx');
+const toKeyValueMap = require('./signalfx-transform-helper').toKeyValueMap;
 
-const packageFile = require('./package.json')
+const packageFile = require('./package.json');
 
 const AUTH_TOKEN = process.env.SIGNALFX_AUTH_TOKEN;
 const TIMEOUT_MS = process.env.SIGNALFX_SEND_TIMEOUT;
 
 const INGEST_ENDPOINT = process.env.SIGNALFX_INGEST_ENDPOINT;
 
-var CLIENT_OPTIONS = {};
+const CLOUDWATCH_EVENT_TYPE = 'Cloudwatch';
+
+const CLIENT_OPTIONS = {};
 if (INGEST_ENDPOINT) {
   CLIENT_OPTIONS.ingestEndpoint = INGEST_ENDPOINT
 } else {
@@ -23,9 +26,21 @@ if (!isNaN(timeoutMs)) {
   CLIENT_OPTIONS.timeout = 300;
 }
 
-var defaultDimensions, metricSender;
+const clearSendPromises = () => {
+  sendPromises = [];
+};
 
-var sendPromises = [];
+let defaultDimensions, metricSender;
+
+let sendPromises = [];
+
+function handleSend(sendPromise){
+  return sendPromise.catch((err) => {
+    if (err) {
+      console.error('Could not send data to SignalFx!', err);
+    }
+  }).then(() => sendPromises.push(sendPromise));
+}
 
 function sendMetric(metricName, metricType, metricValue, dimensions={}) {
   var dp = {
@@ -36,22 +51,52 @@ function sendMetric(metricName, metricType, metricValue, dimensions={}) {
   var datapoints = {};
   datapoints[metricType] = [dp];
 
-  var sendPromise = metricSender.send(datapoints).catch((err) => {
-    if (err) {
-      console.log(err);
-    }
-  });
-  sendPromises.push(sendPromise);
-  return sendPromise;
+  return handleSend(metricSender.send(datapoints));
 }
 
-const clearSendPromises = () => {
-  sendPromises = [];
+function sendCustomizedEvent(type, dimensions, properties, timestamp) {
+  let event = {
+    category: 'USER_DEFINED',
+    eventType: type,
+    dimensions: dimensions,
+    properties: properties
+  };
+
+  if (timestamp) {
+    event = Object.assign(event, {timestamp: timestamp});
+  }
+
+  return handleSend(metricSender.sendEvent(event));
+}
+
+function toUnixTime(dateString) {
+  return new Date(dateString).getTime();
+}
+
+function sendCWEvent(cwEvent) {
+  let details, resources;
+
+  try {
+    details = toKeyValueMap({detail: cwEvent.detail});
+    resources = toKeyValueMap({resources: cwEvent.resources});
+  } catch (err) {
+    console.error('Unable to convert details or resources to a key value map. They wont be included in the event.', err);
+  }
+
+  let sfxEvent = {
+    category: 'USER_DEFINED',
+    eventType: CLOUDWATCH_EVENT_TYPE,
+    dimensions: {region: cwEvent.region, account: cwEvent.account, 'detail-type': cwEvent['detail-type'], source: cwEvent.source},
+    properties: Object.assign({id: cwEvent.id, version: cwEvent.version}, details, resources),
+    timestamp: toUnixTime(cwEvent.time)
+  };
+
+  return handleSend(metricSender.sendEvent(sfxEvent));
 }
 
 function setAccessToken(accessToken) {
   metricSender = new signalfx.IngestJson(accessToken || AUTH_TOKEN, CLIENT_OPTIONS);
-} 
+}
 
 module.exports = {
   setAccessToken: setAccessToken,
@@ -92,7 +137,15 @@ module.exports = {
     return sendMetric(metricName, 'counters', metricValue, dimensions);
   },
 
+  sendCustomEvent: function sendCustomEvent(type, dimensions, properties, timestamp) {
+    return sendCustomizedEvent(type, dimensions, properties, timestamp);
+  },
+
+  sendCloudwatchEvent: function sendCloudwatchEvent(cwevent) {
+    return sendCWEvent(cwevent);
+  },
+
   waitForAllSends: function waitForAllSends() {
     return Promise.all(sendPromises).then(clearSendPromises, clearSendPromises);
   }
-}
+};
