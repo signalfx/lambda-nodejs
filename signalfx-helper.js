@@ -58,7 +58,7 @@ function sendCustomizedEvent(eventType, dimensions, properties, timestamp) {
     category: 'USER_DEFINED',
     eventType,
     dimensions,
-    properties,
+    properties
   };
 
   if (timestamp) {
