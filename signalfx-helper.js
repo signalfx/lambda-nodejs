@@ -30,11 +30,12 @@ let defaultDimensions, metricSender;
 let sendPromises = [];
 
 function handleSend(sendPromise){
+  sendPromises.push(sendPromise);
   return sendPromise.catch((err) => {
     if (err) {
       console.error('Could not send data to SignalFx!', err);
     }
-  }).then(() => sendPromises.push(sendPromise));
+  });
 }
 
 function clearSendPromises() {
