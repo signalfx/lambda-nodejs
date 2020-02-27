@@ -8,15 +8,20 @@ function isPrimitive(x) {
 }
 
 function sanitize(name) {
-  return name.replace(/[^a-zA-Z0-9\-_]+/gi, '_').substring(0, MAX_FIELDNAME_LENGTH);
+  let sanitizedName = name.replace(/[^a-zA-Z0-9\-_]+/gi, '_');
+  if (name.length > MAX_FIELDNAME_LENGTH) {
+    console.warn('Field name ' + name + ' longer than ' + MAX_FIELDNAME_LENGTH + ' will be truncated.');
+    sanitizedName = sanitizedName.substring(0, MAX_FIELDNAME_LENGTH);
+  }
+  return sanitizedName;
 }
 
 function flatten(obj, newObj, prefix) {
-  for (let entry of Object.entries(obj)) {
-    if (isPrimitive(entry[0]) && isPrimitive(entry[1])) {
-      newObj[sanitize(prefix + entry[0])] = entry[1];
+  for (let [key, value] of Object.entries(obj)) {
+    if (isPrimitive(key) && isPrimitive(value)) {
+      newObj[sanitize(prefix + key)] = value;
     } else {
-      flatten(entry[1], newObj,  prefix + entry[0] + FIELD_SEPARATOR);
+      flatten(value, newObj,  prefix + key + FIELD_SEPARATOR);
     }
   }
   return newObj;

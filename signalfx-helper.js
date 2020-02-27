@@ -10,7 +10,7 @@ const TIMEOUT_MS = process.env.SIGNALFX_SEND_TIMEOUT;
 
 const INGEST_ENDPOINT = process.env.SIGNALFX_INGEST_ENDPOINT;
 
-const CLOUDWATCH_EVENT_TYPE = 'Cloudwatch';
+const CLOUDWATCH_EVENT_TYPE = 'CloudWatch';
 
 const CLIENT_OPTIONS = {};
 if (INGEST_ENDPOINT) {
@@ -26,12 +26,7 @@ if (!isNaN(timeoutMs)) {
   CLIENT_OPTIONS.timeout = 300;
 }
 
-const clearSendPromises = () => {
-  sendPromises = [];
-};
-
 let defaultDimensions, metricSender;
-
 let sendPromises = [];
 
 function handleSend(sendPromise){
@@ -40,6 +35,10 @@ function handleSend(sendPromise){
       console.error('Could not send data to SignalFx!', err);
     }
   }).then(() => sendPromises.push(sendPromise));
+}
+
+function clearSendPromises() {
+  sendPromises = [];
 }
 
 function sendMetric(metricName, metricType, metricValue, dimensions={}) {
@@ -54,16 +53,16 @@ function sendMetric(metricName, metricType, metricValue, dimensions={}) {
   return handleSend(metricSender.send(datapoints));
 }
 
-function sendCustomizedEvent(type, dimensions, properties, timestamp) {
+function sendCustomizedEvent(eventType, dimensions, properties, timestamp) {
   let event = {
     category: 'USER_DEFINED',
-    eventType: type,
-    dimensions: dimensions,
-    properties: properties
+    eventType,
+    dimensions,
+    properties,
   };
 
   if (timestamp) {
-    event = Object.assign(event, {timestamp: timestamp});
+    event = Object.assign(event, {timestamp});
   }
 
   return handleSend(metricSender.sendEvent(event));
@@ -86,7 +85,7 @@ function sendCWEvent(cwEvent) {
   let sfxEvent = {
     category: 'USER_DEFINED',
     eventType: CLOUDWATCH_EVENT_TYPE,
-    dimensions: {region: cwEvent.region, account: cwEvent.account, 'detail-type': cwEvent['detail-type'], source: cwEvent.source},
+    dimensions: {region: cwEvent.region, account: cwEvent.account, detailType: cwEvent['detail-type'], source: cwEvent.source},
     properties: Object.assign({id: cwEvent.id, version: cwEvent.version}, details, resources),
     timestamp: toUnixTime(cwEvent.time)
   };
@@ -141,7 +140,7 @@ module.exports = {
     return sendCustomizedEvent(type, dimensions, properties, timestamp);
   },
 
-  sendCloudwatchEvent: function sendCloudwatchEvent(cwevent) {
+  sendCloudWatchEvent: function sendCloudWatchEvent(cwevent) {
     return sendCWEvent(cwevent);
   },
 

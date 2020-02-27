@@ -8,8 +8,7 @@ describe('signalfx-transform-helper', () => {
   it('should leave flat objects as they are', () => {
     const obj = { 'key1': 'value', 'key2': 5};
     const flattened = signalfxHelper.toKeyValueMap(obj);
-    expect(flattened.key1).to.be.equal('value');
-    expect(flattened.key2).to.be.equal(5);
+    expect(flattened).to.deep.equal(obj);
   });
 
   it('should sanitize field names to include only a-zA-Z0-9-_', () => {

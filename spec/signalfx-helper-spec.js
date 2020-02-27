@@ -91,14 +91,14 @@ describe('signalfx-helper', () => {
       detail: DETAILS
     };
 
-    signalfxHelper.sendCloudwatchEvent(testCwEvent);
+    signalfxHelper.sendCloudWatchEvent(testCwEvent);
 
     expect(SEND_EVENT_STUB.calledOnce).to.be.true;
     const event = SEND_EVENT_STUB.firstCall.args[0];
-    expect(event.eventType).to.be.equal('CloudwatchEvent');
+    expect(event.eventType).to.be.equal('CloudWatch');
     expect(event.timestamp).to.be.equal(1582198581000);
     expect(event.properties.id).to.be.equal('abcd1234-a123-b345-c456-d3f4g5h6j7');
-    expect(event.dimensions['detail-type']).to.be.equal('EC2 Instance State-change Notification');
+    expect(event.dimensions.detailType).to.be.equal('EC2 Instance State-change Notification');
     expect(event.dimensions.source).to.be.equal('aws.ec2');
     expect(event.properties['detail_instance-id']).to.be.equal('i-a1s2d3f4g5h6j7');
     expect(event.properties['detail_state']).to.be.equal('pending');
