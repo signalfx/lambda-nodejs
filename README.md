@@ -179,7 +179,7 @@ To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu
       await signalFxLambda.helper.sendCustomEvent('Custom', {functionName: context.functionName}, {description: 'Custom event'});
             
       // to transform & forward CloudWatch event:
-      await signalFxLambda.helper.sendCloudWatchEvent(event).catch(err => console.log('Event not forwarded to SignalFx!', err));
+      await signalFxLambda.helper.sendCloudWatchEvent(event);
       ...
     });
     ```
