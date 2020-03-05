@@ -96,54 +96,94 @@ To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu
 ## Step 4: Wrap a function
       
 1. Wrap your function handler. Review the following example.  
-```
-'use strict';
-
-const signalFxLambda = require('signalfx-lambda');
-
-exports.handler = signalFxLambda.wrapper((event, context, callback) => {
-  ...
-});
-```
+   ```js
+   'use strict';
+   
+   const signalFxLambda = require('signalfx-lambda');
+   
+   exports.handler = signalFxLambda.wrapper((event, context, callback) => {
+   ...
+   });
+   ```
 
 2. Use async/await. Review the following example.  
-```
-'use strict';
-
-const signalFxLambda = require('signalfx-lambda');
-
-exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
-  ...
-});
-```
+    ```js
+   'use strict';
+   
+   const signalFxLambda = require('signalfx-lambda');
+   
+   exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
+   ...
+   });
+   ```
 
 ## (Optional) Step 5: Send custom metrics from a Lambda function
 
-1. Wrap your function handler. Review the following example. 
+1. If you use synchronous wrapper, review the following example. 
 
-```
-'use strict';
+    ```js
+    'use strict';
+    
+    const signalFxLambda = require('signalfx-lambda');
+    
+    exports.handler = signalFxLambda.wrapper((event, context, callback) => {
+      ...
+      signalFxLambda.helper.sendGauge('gauge.name', value);
+      callback(null, 'Done');
+    });
+    ```
 
-const signalFxLambda = require('signalfx-lambda');
+2. If you use `async/await`, review the following example. 
+    ```js
+    'use strict';
+    
+    const signalFxLambda = require('signalfx-lambda');
+    
+    exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
+      ...
+      signalFxLambda.helper.sendGauge('gauge.name', value);
+    });
+    ```
+    
+## (Optional) Step 6: Send custom events or CloudWatch events from a Lambda function
 
-exports.handler = signalFxLambda.wrapper((event, context, callback) => {
-  ...
-  signalFxLambda.helper.sendGauge('gauge.name', value);
-  callback(null, 'Done');
-});
-```
+1. If you use synchronous wrapper, review the following example. 
 
-2. Use `async/await`. Review the following example. 
-```
-'use strict';
+    ```js
+    'use strict';
+    
+    const signalFxLambda = require('signalfx-lambda');
+    
+    exports.handler = signalFxLambda.wrapper((event, context, callback) => {
+      ...
+      // to send custom event:
+      signalFxLambda.helper.sendCustomEvent('Custom', {functionName: context.functionName}, {description: 'Custom event'})
+         .then(() => callback(null, 'Done'));
+      
+      // to transform & forward CloudWatch event:
+      signalFxLambda.helper.sendCloudWatchEvent(event)
+         .then(() => callback(null, 'Done'))
+      
+    });
+    ```
 
-const signalFxLambda = require('signalfx-lambda');
-
-exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
-  ...
-  signalFxLambda.helper.sendGauge('gauge.name', value);
-});
-```
+2. If you use `async/await`, review the following example. 
+    ```js
+    'use strict';
+    
+    const signalFxLambda = require('signalfx-lambda');
+    
+    exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
+      ...
+      // to send custom event:
+      await signalFxLambda.helper.sendCustomEvent('Custom', {functionName: context.functionName}, {description: 'Custom event'});
+            
+      // to transform & forward CloudWatch event:
+      await signalFxLambda.helper.sendCloudWatchEvent(event);
+      ...
+    });
+    ```
+For additional examples see [sample functions forwarding events to SignalFx](https://github.com/signalfx/cloudwatch-event-forwarder/blob/master/examples).
 
 ## Additional information and optional steps
 

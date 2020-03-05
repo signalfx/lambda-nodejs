@@ -3,3 +3,4 @@ deploy.env
 build
 node_modules
 *.tgz
+.idea
