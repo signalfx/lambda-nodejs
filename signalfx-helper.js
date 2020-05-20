@@ -95,7 +95,7 @@ function sendCWEvent(cwEvent) {
 }
 
 function setAccessToken(accessToken) {
-  metricSender = new signalfx.IngestJson(accessToken || AUTH_TOKEN, CLIENT_OPTIONS);
+  metricSender = new signalfx.Ingest(accessToken || AUTH_TOKEN, CLIENT_OPTIONS);
 }
 
 module.exports = {
