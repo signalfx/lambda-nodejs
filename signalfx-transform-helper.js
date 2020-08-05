@@ -20,6 +20,8 @@ function flatten(obj, newObj, prefix) {
   for (let [key, value] of Object.entries(obj)) {
     if (isPrimitive(key) && isPrimitive(value)) {
       newObj[sanitize(prefix + key)] = value;
+    } else if (prefix !== ''){
+      newObj[sanitize(prefix + key)] = JSON.stringify(value);
     } else {
       flatten(value, newObj,  prefix + key + FIELD_SEPARATOR);
     }

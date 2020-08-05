@@ -1,0 +1,59 @@
+{
+  "Description": "Alerting on failed enumeration of large number of bucket policies",
+  "IP": {
+    "34.199.185.34": 121,
+    "34.205.153.2": 2,
+    "72.21.196.70": 2
+  },
+  "Time Range": [
+    {
+      "count": 125,
+      "start": "2017-04-24T20:23:49Z",
+      "end": "2017-04-24T20:25:54Z"
+    }
+  ],
+  "Source ARN": "arn:aws:sts::123456789012:assumed-role/RoleName",
+  "Record Count": 1,
+  "Location": {
+    "us-east-1": 125
+  },
+  "Event Count": 125,
+  "Events": {
+    "GetBucketLocation": {
+      "count": 48,
+      "ISP": {
+        "Amazon": 48
+      }
+    },
+    "ListRoles": {
+      "count": 2,
+      "ISP": {
+        "Amazon": 2
+      }
+    },
+    "GetBucketPolicy": {
+      "count": 37,
+      "ISP": {
+        "Amazon": 37
+      },
+      "Error Code": {
+        "NoSuchBucketPolicy": 22
+      }
+    },
+    "GetBucketAcl": {
+      "count": 37,
+      "ISP": {
+        "Amazon": 37
+      }
+    },
+    "ListBuckets": {
+      "count": 1,
+      "ISP": {
+        "Amazon": 1
+      }
+    }
+  },
+  "recipientAccountId": {
+    "123456789012": 125
+  }
+}

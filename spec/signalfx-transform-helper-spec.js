@@ -1,5 +1,4 @@
 const signalfxHelper = require('../signalfx-transform-helper');
-const sinon = require('sinon');
 const chai = require('chai');
 const expect = chai.expect;
 
@@ -25,18 +24,17 @@ describe('signalfx-transform-helper', () => {
     expect(flattened['key_otherNestedKey']).to.be.equal('otherValue');
   });
 
-  it('should handle different levels of nesting', () => {
+  it('should handle exactly two levels of nesting', () => {
     const obj = {
       testA: 'a',
       testB: { testBB: 1},
-      testC: { testCC: {testCCC: 'c', testCCCC: 'cccc'}},
+      testC: { testCC: {testCCC: 'c', testCCCC: 3}},
       testD: { testD: 2, testDD: 'dd'}
     };
     const flattened = signalfxHelper.toKeyValueMap(obj);
     expect(flattened['testA']).to.be.equal('a');
     expect(flattened['testB_testBB']).to.be.equal(1);
-    expect(flattened['testC_testCC_testCCC']).to.be.equal('c');
-    expect(flattened['testC_testCC_testCCCC']).to.be.equal('cccc');
+    expect(flattened['testC_testCC']).to.be.equal('{"testCCC":"c","testCCCC":3}');
     expect(flattened['testD_testD']).to.be.equal(2);
     expect(flattened['testD_testDD']).to.be.equal('dd');
   });
@@ -57,25 +55,27 @@ describe('signalfx-transform-helper', () => {
     };
     const flattened = signalfxHelper.toKeyValueMap(obj);
     expect(flattened['resources_0']).to.be.equal('a');
-    expect(flattened['resources_1_b']).to.be.equal('B');
-    expect(flattened['resources_2_c_c_c']).to.be.equal('C');
+    expect(flattened['resources_1']).to.be.equal('{"b":"B"}');
+    expect(flattened['resources_2']).to.be.equal('{"c":{"c":{"c":"C"}}}');
     expect(flattened['resources_3']).to.be.equal('d');
-    expect(flattened['resources_4_e_0']).to.be.equal(1);
-    expect(flattened['resources_4_e_1']).to.be.equal(2);
-    expect(flattened['resources_4_e_2']).to.be.equal(3);
+    expect(flattened['resources_4']).to.be.equal('{"e":[1,2,3]}');
   });
 
   it('should handle sample Amazon event', () => {
     const event = require('./amazonAlert.json');
     const flattened = signalfxHelper.toKeyValueMap(event);
     expect(flattened['detail_risk-score']).to.be.equal(80);
-    expect(flattened['detail_summary_IP_34_199_185_34']).to.be.equal(121);
-    expect(flattened['detail_summary_Time_Range_0_end']).to.be.equal('2017-04-24T20:25:54Z');
+    let expectedDetailSummary = JSON.stringify(require('./expectedDetailSummary.json'));
+    expect(flattened['detail_summary']).to.be.equal(expectedDetailSummary);
   });
 
-  it('should not include empty fields', () => {
+  it('should not include empty first-level fields', () => {
     const object = { details: {}, resources: [], test: {nested: {}}};
     const flattened = signalfxHelper.toKeyValueMap(object);
-    expect(flattened).to.be.an('object').that.is.empty;
+    console.log(JSON.stringify(object));
+    console.log(JSON.stringify(flattened));
+    expect(flattened["details"]).to.be.undefined;
+    expect(flattened["resources"]).to.be.undefined;
+    expect(flattened["test_nested"]).to.be.equal('{}');
   });
 });
