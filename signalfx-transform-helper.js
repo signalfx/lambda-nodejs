@@ -16,6 +16,17 @@ function sanitize(name) {
   return sanitizedName;
 }
 
+function cleanupRecursiveEmptyObjectsAndAttributes(obj) {
+  Object.keys(obj).forEach(function (key) {
+    if (obj[key] && typeof obj[key] === 'object' && Object.keys(obj[key]).length !== 0) {
+      cleanupRecursiveEmptyObjectsAndAttributes(obj[key])
+    } else if (obj[key] && typeof obj[key] === 'object' || obj[key] == null || obj[key] === "") {
+      Array.isArray(obj) ? obj.splice(key, 1) : delete obj[key];
+      cleanupRecursiveEmptyObjectsAndAttributes(obj);
+    }
+  });
+}
+
 function flatten(obj, newObj, prefix) {
   for (let [key, value] of Object.entries(obj)) {
     if (isPrimitive(key) && isPrimitive(value)) {
@@ -30,6 +41,7 @@ function flatten(obj, newObj, prefix) {
 }
 
 function flattenObj(obj) {
+  cleanupRecursiveEmptyObjectsAndAttributes(obj);
   return flatten(obj, {}, '');
 }
 

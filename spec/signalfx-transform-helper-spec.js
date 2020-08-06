@@ -69,13 +69,51 @@ describe('signalfx-transform-helper', () => {
     expect(flattened['detail_summary']).to.be.equal(expectedDetailSummary);
   });
 
-  it('should not include empty first-level fields', () => {
+  it('should not include empty objects and fields', () => {
     const object = { details: {}, resources: [], test: {nested: {}}};
     const flattened = signalfxHelper.toKeyValueMap(object);
     console.log(JSON.stringify(object));
     console.log(JSON.stringify(flattened));
     expect(flattened["details"]).to.be.undefined;
     expect(flattened["resources"]).to.be.undefined;
-    expect(flattened["test_nested"]).to.be.equal('{}');
+    expect(flattened["test_nested"]).to.be.undefined;
+  });
+
+  it('should cleanup empty attributes objects and arrays recursively', () => {
+    const object = {
+      details: {},
+      resources: [],
+      test: {
+        nested: {
+          attr0: "",
+          attr1: null,
+          attr2: undefined,
+          attr3: [],
+          attr4: 42,
+          attr5: "val",
+          attrArr6: [null, undefined, "", {}],
+          attrArrWithObj7: [null, undefined, "", {
+            obj: {
+              str: "foo",
+              blk: "",
+              arr: [{bad: ""}, {"ok": "bar"}]
+            }
+          }],
+          attrObjOk8: {
+              str: "foo",
+          },
+          attrObjBad9: {bad: ""}
+        },
+        nestedMixedBadArr: ["", null, undefined, {inner1: "", inner2: null}],
+        nestedMixedOkArr: ["", 42, null, undefined, {inner1: "", inner2: null, inner3: "deep"}]
+      }
+    };
+    const flattened = signalfxHelper.toKeyValueMap(object);
+    expect(Object.keys(flattened).length).to.be.equal(2);
+    expect(flattened["details"]).to.be.undefined;
+    expect(flattened["resources"]).to.be.undefined;
+    expect(flattened["test_nested"]).to.be.equal('{"attr4":42,"attr5":"val","attrArrWithObj7":[{"obj":{"str":"foo","arr":[{"ok":"bar"}]}}],"attrObjOk8":{"str":"foo"}}');
+    expect(flattened["test_nestedMixedBadArr"]).to.be.undefined;
+    expect(flattened["test_nestedMixedOkArr"]).to.be.equal('[42,{"inner3":"deep"}]');
   });
 });
