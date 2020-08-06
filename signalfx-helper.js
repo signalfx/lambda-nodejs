@@ -1,7 +1,7 @@
 'use strict';
 
 const signalfx = require('signalfx');
-const toKeyValueMap = require('./signalfx-transform-helper').toKeyValueMap;
+const transformDetails = require('./signalfx-transform-helper').transformDetails;
 
 const packageFile = require('./package.json');
 
@@ -74,20 +74,19 @@ function toUnixTime(dateString) {
 }
 
 function sendCWEvent(cwEvent) {
-  let details, resources;
+  let details;
 
   try {
-    details = toKeyValueMap({detail: cwEvent.detail});
-    resources = toKeyValueMap({resources: cwEvent.resources});
+    details = transformDetails("detail", cwEvent.detail);
   } catch (err) {
-    console.error('Unable to convert details or resources to a key value map. They wont be included in the event.', err);
+    console.error('Unable to convert details. They wont be included in the event.', err);
   }
 
   let sfxEvent = {
     category: 'USER_DEFINED',
     eventType: CLOUDWATCH_EVENT_TYPE,
     dimensions: {region: cwEvent.region, account: cwEvent.account, detailType: cwEvent['detail-type'], source: cwEvent.source},
-    properties: Object.assign({id: cwEvent.id, version: cwEvent.version}, details, resources),
+    properties: Object.assign({id: cwEvent.id, version: cwEvent.version}, details, {resources: JSON.stringify(cwEvent.resources)}),
     timestamp: toUnixTime(cwEvent.time)
   };
 

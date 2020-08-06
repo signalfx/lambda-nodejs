@@ -1,7 +1,7 @@
 'use strict';
 
-const FIELD_SEPARATOR = '_';
 const MAX_FIELDNAME_LENGTH = 128;
+const DETAIL_PREFIX = "detail_";
 
 function isPrimitive(x) {
   return Object(x) !== x;
@@ -16,35 +16,15 @@ function sanitize(name) {
   return sanitizedName;
 }
 
-function cleanupRecursiveEmptyObjectsAndAttributes(obj) {
-  Object.keys(obj).forEach(function (key) {
-    if (obj[key] && typeof obj[key] === 'object' && Object.keys(obj[key]).length !== 0) {
-      cleanupRecursiveEmptyObjectsAndAttributes(obj[key])
-    } else if (obj[key] && typeof obj[key] === 'object' || obj[key] == null || obj[key] === "") {
-      Array.isArray(obj) ? obj.splice(key, 1) : delete obj[key];
-      cleanupRecursiveEmptyObjectsAndAttributes(obj);
-    }
-  });
-}
-
-function flatten(obj, newObj, prefix) {
+function transformDetails(obj) {
+  let newObj = {};
   for (let [key, value] of Object.entries(obj)) {
-    if (isPrimitive(key) && isPrimitive(value)) {
-      newObj[sanitize(prefix + key)] = value;
-    } else if (prefix !== ''){
-      newObj[sanitize(prefix + key)] = JSON.stringify(value);
-    } else {
-      flatten(value, newObj,  prefix + key + FIELD_SEPARATOR);
-    }
+      newObj[sanitize(DETAIL_PREFIX + key)] = isPrimitive(value) ? value : JSON.stringify(value);
   }
   return newObj;
 }
 
-function flattenObj(obj) {
-  cleanupRecursiveEmptyObjectsAndAttributes(obj);
-  return flatten(obj, {}, '');
-}
 
 module.exports = {
-  toKeyValueMap: flattenObj
+  transformDetails: transformDetails
 };
