@@ -77,7 +77,7 @@ function sendCWEvent(cwEvent) {
   let details;
 
   try {
-    details = transformDetails("detail", cwEvent.detail);
+    details = transformDetails(cwEvent.detail);
   } catch (err) {
     console.error('Unable to convert details. They wont be included in the event.', err);
   }
