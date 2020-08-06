@@ -72,8 +72,6 @@ describe('signalfx-transform-helper', () => {
   it('should not include empty objects and fields', () => {
     const object = { details: {}, resources: [], test: {nested: {}}};
     const flattened = signalfxHelper.toKeyValueMap(object);
-    console.log(JSON.stringify(object));
-    console.log(JSON.stringify(flattened));
     expect(flattened["details"]).to.be.undefined;
     expect(flattened["resources"]).to.be.undefined;
     expect(flattened["test_nested"]).to.be.undefined;
