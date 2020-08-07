@@ -1,7 +1,7 @@
 'use strict';
 
 const signalfx = require('signalfx');
-const transformDetails = require('./signalfx-transform-helper').transformDetails;
+const extractDetailsForSfx = require('./signalfx-transform-helper').extractDetailsForSfx;
 
 const packageFile = require('./package.json');
 
@@ -74,10 +74,10 @@ function toUnixTime(dateString) {
 }
 
 function sendCWEvent(cwEvent) {
-  let details;
+  let detailsMap;
 
   try {
-    details = transformDetails(cwEvent.detail);
+    detailsMap = extractDetailsForSfx(cwEvent);
   } catch (err) {
     console.error('Unable to convert details. They wont be included in the event.', err);
   }
@@ -86,7 +86,7 @@ function sendCWEvent(cwEvent) {
     category: 'USER_DEFINED',
     eventType: CLOUDWATCH_EVENT_TYPE,
     dimensions: {region: cwEvent.region, account: cwEvent.account, detailType: cwEvent['detail-type'], source: cwEvent.source},
-    properties: Object.assign({id: cwEvent.id, version: cwEvent.version}, details, {resources: JSON.stringify(cwEvent.resources)}),
+    properties: Object.assign({id: cwEvent.id, version: cwEvent.version}, detailsMap, {resources: JSON.stringify(cwEvent.resources)}),
     timestamp: toUnixTime(cwEvent.time)
   };
 

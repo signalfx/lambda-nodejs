@@ -16,15 +16,15 @@ function sanitize(name) {
   return sanitizedName;
 }
 
-function transformDetails(obj) {
-  let newObj = {};
-  for (let [key, value] of Object.entries(obj)) {
-      newObj[sanitize(DETAIL_PREFIX + key)] = isPrimitive(value) ? value : JSON.stringify(value);
+function extractDetailsForSfx(cwEvent) {
+  let detailsMap = {};
+  for (let [key, value] of Object.entries(cwEvent.detail)) {
+      detailsMap[sanitize(DETAIL_PREFIX + key)] = isPrimitive(value) ? value : JSON.stringify(value);
   }
-  return newObj;
+  return detailsMap;
 }
 
 
 module.exports = {
-  transformDetails: transformDetails
+  extractDetailsForSfx: extractDetailsForSfx
 };

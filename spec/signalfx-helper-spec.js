@@ -76,7 +76,7 @@ describe('signalfx-helper', () => {
   });
 
   it('should send a Cloudwatch event with Cloudwatch event type and converted timestamp', () => {
-    const DETAILS = { 'instance-id': 'i-a1s2d3f4g5h6j7', state: 'pending' };
+    const DETAILS = {'instance-id': 'i-a1s2d3f4g5h6j7', state: 'pending', obj: {key: 'val'} };
     const RESOURCES = [ 'arn:aws:ec2:us-east-2:123456789012:instance/i-a1s2d3f4g5h6j7' ];
 
     const testCwEvent = {
@@ -102,7 +102,8 @@ describe('signalfx-helper', () => {
     expect(event.dimensions.source).to.be.equal('aws.ec2');
     expect(event.properties['detail_instance-id']).to.be.equal('i-a1s2d3f4g5h6j7');
     expect(event.properties['detail_state']).to.be.equal('pending');
-    expect(event.properties['resources_0']).to.be.equal('arn:aws:ec2:us-east-2:123456789012:instance/i-a1s2d3f4g5h6j7');
+    expect(event.properties['detail_obj']).to.be.equal('{key:"val"}');
+    expect(event.properties['resources']).to.be.equal('["arn:aws:ec2:us-east-2:123456789012:instance/i-a1s2d3f4g5h6j7"]');
   });
 
 });
