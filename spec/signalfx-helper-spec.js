@@ -14,7 +14,7 @@ class DummyIngestJson {
   }
 }
 
-mock('signalfx', { IngestJson: DummyIngestJson});
+mock('signalfx', { IngestJson: DummyIngestJson, Ingest: DummyIngestJson});
 
 // require helper after singalfx is mocked
 const signalfxHelper = require('../signalfx-helper');
