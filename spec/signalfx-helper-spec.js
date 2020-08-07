@@ -102,7 +102,7 @@ describe('signalfx-helper', () => {
     expect(event.dimensions.source).to.be.equal('aws.ec2');
     expect(event.properties['detail_instance-id']).to.be.equal('i-a1s2d3f4g5h6j7');
     expect(event.properties['detail_state']).to.be.equal('pending');
-    expect(event.properties['detail_obj']).to.be.equal('{key:"val"}');
+    expect(event.properties['detail_obj']).to.be.equal('{"key":"val"}');
     expect(event.properties['resources']).to.be.equal('["arn:aws:ec2:us-east-2:123456789012:instance/i-a1s2d3f4g5h6j7"]');
   });
 
