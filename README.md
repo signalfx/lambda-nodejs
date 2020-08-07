@@ -232,7 +232,7 @@ The Lambda wrapper adds the following dimensions to all data points sent to Sign
 
 1. Run `node-lambda deploy -f deploy.env` to deploy to AWS, which will use any environment variables configured in `.env`. For example: 
 
-#### Test in IntelliJ IDEA
+#### Unit Tests in IntelliJ IDEA
 
 1. Install Jasmine IDE plugin
 
