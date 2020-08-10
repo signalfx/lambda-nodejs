@@ -1,7 +1,7 @@
 'use strict';
 
-const FIELD_SEPARATOR = '_';
 const MAX_FIELDNAME_LENGTH = 128;
+const DETAIL_PREFIX = "detail_";
 
 function isPrimitive(x) {
   return Object(x) !== x;
@@ -16,21 +16,15 @@ function sanitize(name) {
   return sanitizedName;
 }
 
-function flatten(obj, newObj, prefix) {
-  for (let [key, value] of Object.entries(obj)) {
-    if (isPrimitive(key) && isPrimitive(value)) {
-      newObj[sanitize(prefix + key)] = value;
-    } else {
-      flatten(value, newObj,  prefix + key + FIELD_SEPARATOR);
-    }
+function extractDetailsForSfx(cwEvent) {
+  let detailsMap = {};
+  for (let [key, value] of Object.entries(cwEvent.detail)) {
+      detailsMap[sanitize(DETAIL_PREFIX + key)] = isPrimitive(value) ? value : JSON.stringify(value);
   }
-  return newObj;
+  return detailsMap;
 }
 
-function flattenObj(obj) {
-  return flatten(obj, {}, '');
-}
 
 module.exports = {
-  toKeyValueMap: flattenObj
+  extractDetailsForSfx: extractDetailsForSfx
 };
