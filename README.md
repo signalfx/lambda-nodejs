@@ -4,7 +4,7 @@
 
 You can use this document to add a SignalFx wrapper to your AWS Lambda for Node.js. 
 
-The SignalFx Node.js Lambda Wrapper wraps around an AWS Lambda Node.js function handler, which allows metrics to be sent to SignalFx.
+The SignalFx Node.js Lambda Wrapper wraps around an AWS Lambda Node.js function handler, which allows metrics and traces to be sent to SignalFx.
 
 At a high-level, to add a SignalFx Node.js Lambda wrapper, you can:
    * Package the code yourself; or
@@ -80,22 +80,51 @@ To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu
 
 ## Step 3: Set environment variables
 
-1. Set SIGNALFX_AUTH_TOKEN with your correct access token. Review the following example. 
+1. Set SIGNALFX_ACCESS_TOKEN with your correct access token. Review the following example. 
     ```bash
-     SIGNALFX_AUTH_TOKEN=signalfx token
+     SIGNALFX_ACCESS_TOKEN=access-token
     ```
-2. Set the ingest endpoint URL with the domain that corresponds to your realm. Review the following example.   
-    ```bash
-    SIGNALFX_INGEST_ENDPOINT=[https://pops.signalfx.com]
-    ```
+
+2. If you use OpenTelemetry Collector, or want to ingest directly from a realm other than us0, then you must set at least one endpoint variable. (For environment variables, SignalFx defaults to the us0 realm. As a result, if you are not in the us0 realm, you may need to set your environment variables.) There are two options:
+
+
+### Option 1.
+
+You can update SIGNALFX_ENDPOINT_URL and SIGNALFX_METRICS_URL where traces will be sent to the Otel collector and metrics will go directly to the ingest endpoint, respectively.
+
+```bash
+SIGNALFX_METRICS_URL=https://ingest.<realm>.signalfx.com
+SIGNALFX_ENDPOINT_URL=http://<otel-collector-host>:9411/api/v2/spans
+```
+
+Note that the you'll need to specify the full path when sending to Otel collector i.e, `http://<otel-collector-host>:9411/api/v2/spans.
+
+### Option 2.
+
+You can update SIGNALFX_ENDPOINT_URL where both metrics and traces will be sent to the SignalFx backend. Refer step 2 above (locate the ingest endpoint) to figure out the SignalFx ingest URL.
+
+
+```bash
+SIGNALFX_ENDPOINT_URL=http://ingest.<realm>.signalfx.com
+```
+
+To learn more, see:
+  [Deploying the OpenTelemetry Collector](https://docs.signalfx.com/en/latest/apm/apm-getting-started/apm-opentelemetry-collector.html)
+
 3. (Optional) Update SIGNALFX_SEND_TIMEOUT. Review the following example. 
     ```bash
     SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
     ```
 
+4. (Optional) Globally disable metrics or tracing by setting SIGNALFX_TRACING_ENABLED and/or SIGNALFX_METRICS_ENABLED to "false".
+    ```bash
+    SIGNALFX_TRACING_ENABLED=false [defaults to true]
+    SIGNALFX_METRICS_ENABLED=false [defaults to true]
+    ```
+
 ## Step 4: Wrap a function
       
-1. Wrap your function handler. Review the following example.  
+1. Wrap your function handler to enable both metrics and traces. Review the following example.  
    ```js
    'use strict';
    
@@ -105,6 +134,8 @@ To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu
    ...
    });
    ```
+
+   You can also use `signalFxLambda.wrapperMetrics` or `signalFxLambda.wrapperTracing` to enable only either metrics or tracing.
 
 2. Use async/await. Review the following example.  
     ```js
@@ -116,6 +147,8 @@ To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu
    ...
    });
    ```
+
+   You can also use `signalFxLambda.asyncWrapperMetrics` or `signalFxLambda.asyncWrapperTracing` to enable only either metrics or tracing.
 
 ## (Optional) Step 5: Send custom metrics from a Lambda function
 
@@ -185,6 +218,7 @@ To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu
     ```
 For additional examples see [sample functions forwarding events to SignalFx](https://github.com/signalfx/cloudwatch-event-forwarder/blob/master/examples).
 
+
 ## Additional information and optional steps
 
 ### Metrics and dimensions sent by the wrapper
@@ -213,6 +247,23 @@ The Lambda wrapper adds the following dimensions to all data points sent to Sign
 | function_wrapper_version  | SignalFx function wrapper qualifier (e.g. signalfx-lambda-0.0.9) |
 | metric_source | The literal value of 'lambda_wrapper' |
 
+### Tags sent by the tracing wrapper 
+
+The tracing wrapper creates a span for the wrapper handler. This span contains the following tags:
+
+| Tag | Description |
+|-|-|
+| aws_request_id | AWS Request ID |
+| lambda_arn | ARN of the Lambda function instance |
+| aws_region | AWS region |
+| aws_account_id | AWS account ID |
+| aws_function_name | AWS function name |
+| aws_function_version | AWS function version |
+| aws_function_qualifier | AWS function version qualifier (version or version alias if it is not an event source mapping Lambda invocation) |
+| event_source_mappings | AWS function name (if it is an event source mapping Lambda invocation) |
+| aws_execution_env | AWS execution environment (e.g., AWS_Lambda_python3.6) |
+| function_wrapper_version | SignalFx function wrapper qualifier (e.g., signalfx_lambda_0.0.2) |
+| component | The literal value of 'python-lambda-wrapper |
 
 ### Deployment
 
