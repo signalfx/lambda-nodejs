@@ -26,10 +26,39 @@ describe('signalfx-helper', () => {
   const CONTEXT_DIMENSIONS = {sampleDimension: 'test', otherDimension: 'otherTest'};
 
   beforeEach(() => {
-    signalfxHelper.setAccessToken('aaaaaaaaaaa');
-    signalfxHelper.setLambdaFunctionContext({invokedFunctionArn: LAMBDA_ARN}, CONTEXT_DIMENSIONS);
+    const meta = signalfxHelper.getExecutionMetadata({invokedFunctionArn: LAMBDA_ARN});
+    signalfxHelper.setDefaultDimensions(meta, CONTEXT_DIMENSIONS);
     SEND_EVENT_STUB.resetHistory();
     SEND_FUNCTION_STUB.resetHistory();
+  });
+
+  afterEach(() => {
+    delete process.env.SIGNALFX_TRACING_ENABLED;
+    delete process.env.SIGNALFX_METRICS_ENABLED;
+  });
+
+  it('should use args and env vars to disable tracing/metrics', () => {
+    expect(signalfxHelper.isMetricsDisabled(true)).to.equal(true);
+    expect(signalfxHelper.isMetricsDisabled(false)).to.equal(false);
+
+    expect(signalfxHelper.isTracingDisabled(true)).to.equal(true);
+    expect(signalfxHelper.isTracingDisabled(false)).to.equal(false);
+
+    process.env.SIGNALFX_METRICS_ENABLED = 'false';
+    expect(signalfxHelper.isMetricsDisabled(true)).to.equal(true);
+    expect(signalfxHelper.isMetricsDisabled(false)).to.equal(true);
+
+    process.env.SIGNALFX_TRACING_ENABLED = 'false';
+    expect(signalfxHelper.isTracingDisabled(true)).to.equal(true);
+    expect(signalfxHelper.isTracingDisabled(false)).to.equal(true);
+
+    process.env.SIGNALFX_METRICS_ENABLED = 'faksjdke';
+    expect(signalfxHelper.isMetricsDisabled(true)).to.equal(true);
+    expect(signalfxHelper.isMetricsDisabled(false)).to.equal(false);
+
+    process.env.SIGNALFX_TRACING_ENABLED = 'f1312kse';
+    expect(signalfxHelper.isTracingDisabled(true)).to.equal(true);
+    expect(signalfxHelper.isTracingDisabled(false)).to.equal(false);
   });
 
   it('should send a counter with correct name, value and dimension', () => {
