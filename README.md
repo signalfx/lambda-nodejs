@@ -76,7 +76,7 @@ To locate your realm:
 2. Click **My Profile**.
 3. Next to **Organizations**, review the listed realm.
 
-To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu0.signalfx.com. You will use the realm subdomain to set SIGNALFX_INGEST_ENDPOINT variable in the next step.
+To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu0.signalfx.com. You will use the realm subdomain to set SIGNALFX_ENDPOINT_URL and SIGNALFX_METRICS_URL variables in the next step.
 
 ## Step 3: Set environment variables
 
