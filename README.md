@@ -93,7 +93,7 @@ To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu
 You can update SIGNALFX_ENDPOINT_URL and SIGNALFX_METRICS_URL where traces will be sent to the Otel collector and metrics will go directly to the ingest endpoint, respectively.
 
 ```bash
-SIGNALFX_METRICS_URL=https://ingest.<realm>.signalfx.com/v2/datapoint
+SIGNALFX_METRICS_URL=https://ingest.<realm>.signalfx.com
 SIGNALFX_ENDPOINT_URL=http://<otel-collector-host>:9411/api/v2/spans
 ```
 
