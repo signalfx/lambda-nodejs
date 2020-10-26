@@ -2,7 +2,7 @@
 
 ## Overview 
 
-You can use this document to add a SignalFx wrapper to your AWS Lambda for Node.js. 
+You can use this document to add a SignalFx wrapper to your AWS Lambda for Node.js.
 
 The SignalFx Node.js Lambda Wrapper wraps around an AWS Lambda Node.js function handler, which allows metrics and traces to be sent to SignalFx.
 
@@ -47,7 +47,7 @@ In this option, you will use a Lambda layer created and hosted by SignalFx.
 
 In this option, you will choose a SignalFx template, and then deploy a copy of the layer.
 
-1. Open your AWS console. 
+1. Open your AWS console.
 2. In the landing page, under **Compute**, click **Lambda**.
 3. Click **Create function** to create a layer with SignalFx's capabilities.
 4. Click **Browse serverless app repository**.
@@ -55,7 +55,7 @@ In this option, you will choose a SignalFx template, and then deploy a copy of t
 6. In the search field, enter and select **signalfx-lambda-python-wrapper**.
 7. Review the template, permissions, licenses, and then click **Deploy**.
     * A copy of the layer will now be deployed into your account.
-8. Return to the previous screen to add a layer to the function, select from list of runtime compatible layers, and then select the name of the copy. 
+8. Return to the previous screen to add a layer to the function, select from list of runtime compatible layers, and then select the name of the copy.
 
 ### Option 3: Install the wrapper package with npm
 
@@ -190,13 +190,12 @@ To learn more, see:
     exports.handler = signalFxLambda.wrapper((event, context, callback) => {
       ...
       // to send custom event:
-      signalFxLambda.helper.sendCustomEvent('Custom', {functionName: context.functionName}, {description: 'Custom event'})
-         .then(() => callback(null, 'Done'));
+      signalFxLambda.helper.sendCustomEvent('Custom', {functionName: context.functionName}, {description: 'Custom event'});
       
       // to transform & forward CloudWatch event:
-      signalFxLambda.helper.sendCloudWatchEvent(event)
-         .then(() => callback(null, 'Done'))
-      
+      signalFxLambda.helper.sendCloudWatchEvent(event);
+         
+      callback(null, 'Done');
     });
     ```
 
@@ -209,10 +208,10 @@ To learn more, see:
     exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
       ...
       // to send custom event:
-      await signalFxLambda.helper.sendCustomEvent('Custom', {functionName: context.functionName}, {description: 'Custom event'});
+      signalFxLambda.helper.sendCustomEvent('Custom', {functionName: context.functionName}, {description: 'Custom event'});
             
       // to transform & forward CloudWatch event:
-      await signalFxLambda.helper.sendCloudWatchEvent(event);
+      signalFxLambda.helper.sendCloudWatchEvent(event);
       ...
     });
     ```
@@ -264,6 +263,36 @@ The tracing wrapper creates a span for the wrapper handler. This span contains t
 | aws_execution_env | AWS execution environment (e.g., AWS_Lambda_python3.6) |
 | function_wrapper_version | SignalFx function wrapper qualifier (e.g., signalfx_lambda_0.0.2) |
 | component | The literal value of 'python-lambda-wrapper |
+
+#### Adding Extra Tags
+
+If you want to add extra tags to your spans use the following snippet **inside** your lambda handler (i.e. this code has to run during lambda handler invocation, not as a part of the cold start logic):
+
+```js
+const tracing = require("signalfx-lambda/tracing");
+
+// this sample uses asyncWrapper but the logic is the same when
+// the synchronous wrapper is used
+exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
+  const tracer = tracing.tracer();
+  tracer.scope().active().setTag("my-custom-tag", "some-value");
+});
+```
+
+### Asynchronous Metrics and Events Delivery
+
+Although the following `signalFxLambda.helper.send*` methods all return promises that resolve when send operation completes it is recommended to ignore those promises as the wrapper is going to wait for their completion internally.
+
+This way multiple send operations may run concurrently without blocking your lambda handler code.
+
+You can still await any of those promises if your use case forces you to do so.
+
+```js
+function sendGauge(metricName, metricValue, dimensions);
+function sendCounter(metricName, metricValue, dimensions);
+function sendCustomEvent(type, dimensions, properties, timestamp);
+function sendCloudWatchEvent(cwevent);
+```
 
 ### Deployment
 
