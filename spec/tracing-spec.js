@@ -3,6 +3,7 @@ const sinon = require("sinon");
 const chai = require("chai");
 const getPort = require("get-port");
 const expect = chai.expect;
+const generateId = require('signalfx-tracing/src/platform/node/id');
 
 const getAgent = require("./agent");
 const e = require("express");
@@ -29,7 +30,7 @@ describe("signalfx-helper", () => {
     functionVersion: "2.0",
   };
 
-  function testSpanWithError(span, err, done) {
+  function testSpanWithError(span, err) {
     expect(span.name).to.equal("lambda_node_test-func");
     expect(span.localEndpoint.serviceName).to.equal("signalfx-lambda");
     if (err) {
@@ -40,7 +41,6 @@ describe("signalfx-helper", () => {
     } else {
       expect(span.tags.error).to.equal(undefined);
     }
-    done();
   }
 
   beforeEach((done) => {
@@ -78,8 +78,8 @@ describe("signalfx-helper", () => {
       expect(err.message).to.equal("error msg");
       expect(result).to.equal("result val");
       expect(agent.spans).to.length(1);
-      const span = agent.spans[0];
-      testSpanWithError(span, err, done);
+      testSpanWithError(agent.spans[0], err);
+      done();
     }
 
     sfx.wrapperTracing(function (event, ctx, callback) {
@@ -87,7 +87,7 @@ describe("signalfx-helper", () => {
     })({}, ctx, callback);
   });
 
-  it("should report spans with async handler", async (done) => {
+  it("should report spans with async handler", async () => {
     try {
       await sfx.asyncWrapperTracing(async function (event, ctx) {
         throw new Error("error msg async");
@@ -97,17 +97,41 @@ describe("signalfx-helper", () => {
       expect(err.message).to.equal("error msg async");
       expect(agent.spans).to.length(1);
       const span = agent.spans[0];
-      testSpanWithError(span, err, done);
+      testSpanWithError(span, err);
     }
   });
 
-  it("async wrapper should return correct response", async (done) => {
+  it("async wrapper should return correct response", async () => {
     const result = await sfx.asyncWrapperTracing(async function (event, ctx) {
       return Promise.resolve("my response");
     })({}, ctx);
     expect(result).is.equal("my response");
     expect(agent.spans).to.length(1);
     const span = agent.spans[0];
-    testSpanWithError(span, null, done);
+    testSpanWithError(span, null);
+  });
+
+  it("should inject properties of the active sync span", (done) => {
+    const eventWithB3Headers = {
+      headers: {
+        'X-B3-TraceId': generateId().toBuffer().toString('hex'),
+        'X-B3-SpanId': generateId().toBuffer().toString('hex'),
+        'X-B3-Sampled': '1',
+      },
+    };
+
+    const expectWhenDone = (err, result) => {
+      expect(err).to.null;
+      expect(result['x-b3-traceid']).to.equal(eventWithB3Headers.headers['X-B3-TraceId']);
+      expect(result['x-b3-parentspanid']).to.equal(eventWithB3Headers.headers['X-B3-SpanId']);
+      expect(result['x-b3-sampled']).to.equal(eventWithB3Headers.headers['X-B3-Sampled']);
+      done();
+    }
+
+    sfx.wrapper(function (event, ctx, callback) {
+      const carrier = {};
+      tracing.inject(carrier);
+      callback(null, carrier);
+    })(eventWithB3Headers, ctx, expectWhenDone);
   });
 });

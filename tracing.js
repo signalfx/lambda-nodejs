@@ -3,6 +3,7 @@
 const url = require('url');
 
 const tracing = require("signalfx-tracing");
+const FORMATS = require("signalfx-tracing/ext/formats.js");
 const opentracing = require("opentracing");
 const NoopTracer = require("signalfx-tracing/src/noop/tracer");
 
@@ -68,5 +69,15 @@ module.exports = {
     span.setTag("span.kind", "server");
     span.setTag("component", "node-lambda-wrapper");
     return span;
+  },
+
+  inject: function inject(carrier) {
+    const activeSpan = _tracer.scope().active();
+    if (!activeSpan) {
+      console.warn('There are no active spans to inject.');
+      return;
+    }
+
+    _tracer.inject(activeSpan, FORMATS.HTTP_HEADERS, carrier);
   },
 };
