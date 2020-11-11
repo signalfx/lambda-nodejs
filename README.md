@@ -278,6 +278,30 @@ exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
   tracer.scope().active().setTag("my-custom-tag", "some-value");
 });
 ```
+### Trace context propagation
+
+The wrapper provides some support for trace context propagation across service boundaries. By default, you can propagate trace context across Lambda boundaries in these situations:
+- Events are coming in from an Amazon API Gateway and outgoing requests use HTTP/S.
+- You programatically execute events with a payload that includes B3-compatible key-value pairs in `headers`.
+
+Other situations, such as receiving requests from Amazon CloudFront or sending output to Lambda destinations, aren't supported by default. In these cases, configure trace context propagation manually.
+
+This example shows you how to manually configure trace context propagation when you're calling another service using a method that's not HTTP/S:
+
+``` 
+const tracing = require("signalfx-lambda/tracing");
+
+// this sample uses asyncWrapper but the logic is the same when
+// the synchronous wrapper is used
+exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
+  const tracer = tracing.tracer();
+
+  const contextCarrier = {}; // any writeable object
+  tracer.inject(contextCarrier);
+  // contextCarrier is now extended with "X-B3-*" fields, which should be extracted on the receiving end
+  // no fields will be added unless there's an active span at the time when inject() is called
+});
+```
 
 ### Asynchronous Metrics and Events Delivery
 
