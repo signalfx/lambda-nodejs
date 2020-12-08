@@ -52,7 +52,7 @@ In this option, you will choose a SignalFx template, and then deploy a copy of t
 3. Click **Create function** to create a layer with SignalFx's capabilities.
 4. Click **Browse serverless app repository**.
 5. Click **Public applications**.
-6. In the search field, enter and select **signalfx-lambda-python-wrapper**.
+6. In the search field, enter and select **signalfx-lambda-nodejs-wrapper**.
 7. Review the template, permissions, licenses, and then click **Deploy**.
     * A copy of the layer will now be deployed into your account.
 8. Return to the previous screen to add a layer to the function, select from list of runtime compatible layers, and then select the name of the copy.
@@ -260,9 +260,9 @@ The tracing wrapper creates a span for the wrapper handler. This span contains t
 | aws_function_version | AWS function version |
 | aws_function_qualifier | AWS function version qualifier (version or version alias if it is not an event source mapping Lambda invocation) |
 | event_source_mappings | AWS function name (if it is an event source mapping Lambda invocation) |
-| aws_execution_env | AWS execution environment (e.g., AWS_Lambda_python3.6) |
+| aws_execution_env | AWS execution environment (e.g., AWS_Lambda_nodejs12.x) |
 | function_wrapper_version | SignalFx function wrapper qualifier (e.g., signalfx_lambda_0.0.2) |
-| component | The literal value of 'python-lambda-wrapper |
+| component | The literal value of 'nodejs-lambda-wrapper |
 
 #### Adding Extra Tags
 
