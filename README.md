@@ -262,7 +262,7 @@ The tracing wrapper creates a span for the wrapper handler. This span contains t
 | event_source_mappings | AWS function name (if it is an event source mapping Lambda invocation) |
 | aws_execution_env | AWS execution environment (e.g., AWS_Lambda_nodejs12.x) |
 | function_wrapper_version | SignalFx function wrapper qualifier (e.g., signalfx_lambda_0.0.2) |
-| component | The literal value of 'nodejs-lambda-wrapper |
+| component | The literal value of 'nodejs-lambda-wrapper' |
 
 #### Adding Extra Tags
 
