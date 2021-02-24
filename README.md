@@ -288,16 +288,14 @@ Other situations, such as receiving requests from Amazon CloudFront or sending o
 
 This example shows you how to manually configure trace context propagation when you're calling another service using a method that's not HTTP/S:
 
-``` 
+```javascript
 const tracing = require("signalfx-lambda/tracing");
 
 // this sample uses asyncWrapper but the logic is the same when
 // the synchronous wrapper is used
 exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
-  const tracer = tracing.tracer();
-
   const contextCarrier = {}; // any writeable object
-  tracer.inject(contextCarrier);
+  tracing.inject(contextCarrier);
   // contextCarrier is now extended with "X-B3-*" fields, which should be extracted on the receiving end
   // no fields will be added unless there's an active span at the time when inject() is called
 });
