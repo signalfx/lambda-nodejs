@@ -309,8 +309,12 @@ exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
   tracing.inject(contextCarrier);
   // contextCarrier is now extended with "X-B3-*" fields, which should be extracted on the receiving end
   // no fields will be added unless there's an active span at the time when inject() is called
+  
+  // inject contextCarrier such that it can be accessed as `event.headers` from within the invoked lambda.
 });
 ```
+
+`contextCarrier` must be injected into the headers or payload of your outgoing request. Context propagation will work correctly as long as the context you injected can be accessed as `event.headers` from within the invoked Lambda.
 
 ### Asynchronous Metrics and Events Delivery
 
