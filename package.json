@@ -1,6 +1,6 @@
 {
   "name": "signalfx-lambda",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "Node.js lambda wrapper for SignalFx",
   "homepage": "https://signalfx.com",
   "author": {
@@ -9,12 +9,19 @@
     "url": "https://signalfx.com"
   },
   "license": "Apache-2.0",
-  "main": "signalfx-lambda",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.esm.js",
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "signalfx": "^7.2.2",
     "signalfx-tracing": "0.10.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^11.2.0",
     "chai": "^4.2.0",
     "express": "^4.17.1",
     "get-port": "^5.1.1",
@@ -22,16 +29,17 @@
     "jasmine": "^3.6.3",
     "jasmine-terminal-reporter": "^1.0.3",
     "mock-require": "^3.0.3",
+    "rollup": "^2.40.0",
+    "rollup-plugin-filesize": "^9.1.0",
+    "rollup-plugin-local-resolve": "^1.0.7",
     "sinon": "^9.2.1"
   },
-  "bundledDependencies": [
-    "signalfx"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/signalfx/lambda-nodejs"
   },
   "scripts": {
-    "test": "node node_modules/jasmine/bin/jasmine.js --config=spec/config/jasmine.json"
+    "test": "node node_modules/jasmine/bin/jasmine.js --config=spec/config/jasmine.json",
+    "build": "npx rollup --config"
   }
 }

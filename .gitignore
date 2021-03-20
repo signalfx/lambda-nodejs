@@ -4,3 +4,5 @@ build
 node_modules
 *.tgz
 .idea
+.DS_Store
+dist
