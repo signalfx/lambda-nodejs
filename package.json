@@ -12,7 +12,7 @@
   "main": "signalfx-lambda",
   "dependencies": {
     "signalfx": "^7.2.2",
-    "signalfx-tracing": "0.10.0"
+    "signalfx-tracing": "^0.12.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
