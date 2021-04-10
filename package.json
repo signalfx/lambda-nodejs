@@ -1,6 +1,6 @@
 {
   "name": "signalfx-lambda",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "description": "Node.js lambda wrapper for SignalFx",
   "homepage": "https://signalfx.com",
   "author": {
@@ -11,7 +11,7 @@
   "license": "Apache-2.0",
   "main": "signalfx-lambda",
   "dependencies": {
-    "signalfx": "^7.2.2",
+    "signalfx": "^7.3.0",
     "signalfx-tracing": "^0.12.0"
   },
   "devDependencies": {
