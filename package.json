@@ -1,6 +1,6 @@
 {
   "name": "signalfx-lambda",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0",
   "description": "Node.js lambda wrapper for SignalFx",
   "homepage": "https://signalfx.com",
   "author": {
