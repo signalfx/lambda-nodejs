@@ -101,7 +101,7 @@ Note that the you'll need to specify the full path when sending to Otel collecto
 
 ### Option 2.
 
-You can update SIGNALFX_ENDPOINT_URL and SIGNALFX_METRICS_URL to send spans directly to the SignalFx backend. Refer step 2 above (locate the ingest endpoint) to figure out the SignalFx ingest URL.
+You can update SIGNALFX_ENDPOINT_URL and SIGNALFX_METRICS_URL to send spans and metrics respectively directly to the SignalFx backend. Refer step 2 above (locate the ingest endpoint) to figure out the SignalFx ingest URL.
 
 
 ```bash
