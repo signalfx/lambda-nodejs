@@ -11,19 +11,19 @@
   "license": "Apache-2.0",
   "main": "signalfx-lambda",
   "dependencies": {
-    "signalfx": "^7.3.0",
-    "signalfx-tracing": "^0.12.0"
+    "signalfx": "^7.4.0",
+    "signalfx-tracing": "^0.13.0"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.3.4",
     "express": "^4.17.1",
     "get-port": "^5.1.1",
-    "int64-buffer": "^1.0.0",
-    "jasmine": "^3.6.3",
+    "int64-buffer": "^1.0.1",
+    "jasmine": "^3.8.0",
     "jasmine-terminal-reporter": "^1.0.3",
     "mock-require": "^3.0.3",
     "node-lambda": "^0.19.1",
-    "sinon": "^9.2.1"
+    "sinon": "^11.1.1"
   },
   "repository": {
     "type": "git",
