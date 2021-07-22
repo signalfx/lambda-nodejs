@@ -1,6 +1,11 @@
+<p align="center">
+  <img alt="GitHub branch checks state" src="https://img.shields.io/github/checks-status/signalfx/lambda-nodejs/master?style=for-the-badge">
+  <img alt="npm" src="https://img.shields.io/npm/v/signalfx-lambda?style=for-the-badge">
+</p>
+
 # SignalFx Node.js Lambda Wrapper
 
-## Overview 
+## Overview
 
 You can use this document to add a SignalFx wrapper to your AWS Lambda for Node.js.
 
@@ -15,16 +20,16 @@ To learn more about Lambda Layers, please visit the [AWS documentation site](htt
 ## Step 1: Add the Lambda wrapper in AWS
 
 To add the SignalFx wrapper, you have the following options:
-   
+
    * Option 1: In AWS, create a Lambda function, then attach a SignalFx-hosted layer with a wrapper.
-      * If you are already using Lambda layers, then SignalFx recommends that you follow this option. 
+      * If you are already using Lambda layers, then SignalFx recommends that you follow this option.
       * In this option, you will use a Lambda layer created and hosted by SignalFx.
    * Option 2: In AWS, create a Lambda function, then create and attach a layer based on a SignalFx SAM (Serverless Application Model) template.
-      * If you are already using Lambda layers, then SignalFx also recommends that you follow this option. 
+      * If you are already using Lambda layers, then SignalFx also recommends that you follow this option.
       * In this option, you will choose a SignalFx template, and then deploy a copy of the layer.
    * Option 3: Use the wrapper as a regular dependency, and then create a Lambda function based on your artifact containing both code and dependencies.
-   
-For advanced users who want to reduce the size of deployment packages, you can use the wrapper as a developer dependency, but in production, you would add the wrapper to layer in the Lambda environment. This option allows you to work with the wrapper in a local setting and reduce the size of deployment packages at the same time. Please note that this option is not fully documented. 
+
+For advanced users who want to reduce the size of deployment packages, you can use the wrapper as a developer dependency, but in production, you would add the wrapper to layer in the Lambda environment. This option allows you to work with the wrapper in a local setting and reduce the size of deployment packages at the same time. Please note that this option is not fully documented.
 
 ### Option 1: Create a Lambda function, then attach the SignalFx-hosted Lambda layer
 
@@ -40,7 +45,7 @@ In this option, you will use a Lambda layer created and hosted by SignalFx.
 8. Click **Create function**. 
 9. Click **Layers**, then add a layer.
 10. Mark **Provide a layer version**.
-11. Enter an ARN number. 
+11. Enter an ARN number.
   * To locate the ARN number, see [Lambda Layer Versions](https://github.com/signalfx/lambda-layer-versions/blob/master/node/NODE.md).
 
 ### Option 2: Create a Lambda function, then create and attach a layer based on a SignalFx template
@@ -63,12 +68,12 @@ Run the following installation script in your command line to install latest ver
 
 ```javascript
 npm install signalfx-lambda
-```    
+```
 Make sure the package is saved to your package.json. (Newer versions of npm perform this function automatically.)
 
 ## Step 2: Locate the ingest endpoint
 
-By default, this function wrapper will send data to the us0 realm. As a result, if you are not in the us0 realm and you want to use the ingest endpoint directly, then you must explicitly set your realm. 
+By default, this function wrapper will send data to the us0 realm. As a result, if you are not in the us0 realm and you want to use the ingest endpoint directly, then you must explicitly set your realm.
 
 To locate your realm:
 
@@ -80,7 +85,7 @@ To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu
 
 ## Step 3: Set environment variables
 
-1. Set SIGNALFX_ACCESS_TOKEN with your correct access token. Review the following example. 
+1. Set SIGNALFX_ACCESS_TOKEN with your correct access token. Review the following example.
     ```bash
      SIGNALFX_ACCESS_TOKEN=access-token
     ```
@@ -112,7 +117,7 @@ SIGNALFX_ENDPOINT_URL=http://ingest.<realm>.signalfx.com/v2/trace
 To learn more, see:
   [Deploying the OpenTelemetry Collector](https://docs.signalfx.com/en/latest/apm/apm-getting-started/apm-opentelemetry-collector.html)
 
-3. (Optional) Update SIGNALFX_SEND_TIMEOUT. Review the following example. 
+3. (Optional) Update SIGNALFX_SEND_TIMEOUT. Review the following example.
     ```bash
     SIGNALFX_SEND_TIMEOUT=milliseconds for signalfx client timeout [1000]
     ```
@@ -124,13 +129,13 @@ To learn more, see:
     ```
 
 ## Step 4: Wrap a function
-      
-1. Wrap your function handler to enable both metrics and traces. Review the following example.  
+
+1. Wrap your function handler to enable both metrics and traces. Review the following example.
    ```js
    'use strict';
-   
+
    const signalFxLambda = require('signalfx-lambda');
-   
+
    exports.handler = signalFxLambda.wrapper((event, context, callback) => {
    ...
    });
@@ -138,12 +143,12 @@ To learn more, see:
 
    You can also use `signalFxLambda.wrapperMetrics` or `signalFxLambda.wrapperTracing` to enable only either metrics or tracing.
 
-2. Use async/await. Review the following example.  
+2. Use async/await. Review the following example.
     ```js
    'use strict';
-   
+
    const signalFxLambda = require('signalfx-lambda');
-   
+
    exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
    ...
    });
@@ -153,13 +158,13 @@ To learn more, see:
 
 ## (Optional) Step 5: Send custom metrics from a Lambda function
 
-1. If you use synchronous wrapper, review the following example. 
+1. If you use synchronous wrapper, review the following example.
 
     ```js
     'use strict';
-    
+
     const signalFxLambda = require('signalfx-lambda');
-    
+
     exports.handler = signalFxLambda.wrapper((event, context, callback) => {
       ...
       signalFxLambda.helper.sendGauge('gauge.name', value);
@@ -167,50 +172,50 @@ To learn more, see:
     });
     ```
 
-2. If you use `async/await`, review the following example. 
+2. If you use `async/await`, review the following example.
     ```js
     'use strict';
-    
+
     const signalFxLambda = require('signalfx-lambda');
-    
+
     exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
       ...
       signalFxLambda.helper.sendGauge('gauge.name', value);
     });
     ```
-    
+
 ## (Optional) Step 6: Send custom events or CloudWatch events from a Lambda function
 
-1. If you use synchronous wrapper, review the following example. 
+1. If you use synchronous wrapper, review the following example.
 
     ```js
     'use strict';
-    
+
     const signalFxLambda = require('signalfx-lambda');
-    
+
     exports.handler = signalFxLambda.wrapper((event, context, callback) => {
       ...
       // to send custom event:
       signalFxLambda.helper.sendCustomEvent('Custom', {functionName: context.functionName}, {description: 'Custom event'});
-      
+
       // to transform & forward CloudWatch event:
       signalFxLambda.helper.sendCloudWatchEvent(event);
-         
+
       callback(null, 'Done');
     });
     ```
 
-2. If you use `async/await`, review the following example. 
+2. If you use `async/await`, review the following example.
     ```js
     'use strict';
-    
+
     const signalFxLambda = require('signalfx-lambda');
-    
+
     exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
       ...
       // to send custom event:
       signalFxLambda.helper.sendCustomEvent('Custom', {functionName: context.functionName}, {description: 'Custom event'});
-            
+
       // to transform & forward CloudWatch event:
       signalFxLambda.helper.sendCloudWatchEvent(event);
       ...
@@ -247,7 +252,7 @@ The Lambda wrapper adds the following dimensions to all data points sent to Sign
 | function_wrapper_version  | SignalFx function wrapper qualifier (e.g. signalfx-lambda-0.0.9) |
 | metric_source | The literal value of 'lambda_wrapper' |
 
-### Tags sent by the tracing wrapper 
+### Tags sent by the tracing wrapper
 
 The tracing wrapper creates a span for the wrapper handler. This span contains the following tags:
 
@@ -310,7 +315,7 @@ exports.handler = signalFxLambda.asyncWrapper(async (event, context) => {
   tracing.inject(contextCarrier);
   // contextCarrier is now extended with "X-B3-*" fields, which should be extracted on the receiving end
   // no fields will be added unless there's an active span at the time when inject() is called
-  
+
   // inject contextCarrier such that it can be accessed as `event.headers` from within the invoked lambda.
 });
 ```
@@ -348,7 +353,7 @@ function sendCloudWatchEvent(cwevent);
 
 #### Test from AWS
 
-1. Run `node-lambda deploy -f deploy.env` to deploy to AWS, which will use any environment variables configured in `.env`. For example: 
+1. Run `node-lambda deploy -f deploy.env` to deploy to AWS, which will use any environment variables configured in `.env`. For example:
 
 #### Unit Tests in IntelliJ IDEA
 
