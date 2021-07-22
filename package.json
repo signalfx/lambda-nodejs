@@ -22,6 +22,7 @@
     "jasmine": "^3.6.3",
     "jasmine-terminal-reporter": "^1.0.3",
     "mock-require": "^3.0.3",
+    "node-lambda": "^0.19.1",
     "sinon": "^9.2.1"
   },
   "repository": {
@@ -29,6 +30,7 @@
     "url": "https://github.com/signalfx/lambda-nodejs"
   },
   "scripts": {
-    "test": "node node_modules/jasmine/bin/jasmine.js --config=spec/config/jasmine.json"
+    "test": "jasmine --config=spec/config/jasmine.json",
+    "test:integration": "node-lambda run -f deploy.env"
   }
 }
