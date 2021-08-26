@@ -111,7 +111,7 @@ You can update SIGNALFX_ENDPOINT_URL and SIGNALFX_METRICS_URL to send spans and 
 
 ```bash
 SIGNALFX_METRICS_URL=https://ingest.<realm>.signalfx.com
-SIGNALFX_ENDPOINT_URL=http://ingest.<realm>.signalfx.com/v2/trace
+SIGNALFX_ENDPOINT_URL=https://ingest.<realm>.signalfx.com/v2/trace
 ```
 
 To learn more, see:
