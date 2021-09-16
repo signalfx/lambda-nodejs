@@ -19,7 +19,12 @@ function sanitize(name) {
 function extractDetailsForSfx(cwEvent) {
   let detailsMap = {};
   for (let [key, value] of Object.entries(cwEvent.detail)) {
-      detailsMap[sanitize(DETAIL_PREFIX + key)] = isPrimitive(value) ? value : JSON.stringify(value);
+    let sanitizedKey = sanitize(DETAIL_PREFIX + key);
+    if (value == null || typeof value == "boolean" || !isPrimitive(value)) {
+      detailsMap[sanitizedKey] = JSON.stringify(value);
+    } else {
+      detailsMap[sanitizedKey] = value;
+    }
   }
   return detailsMap;
 }
