@@ -46,6 +46,7 @@ describe('signalfx-transform-helper', () => {
         ' key6 ': ' value space-surrounded ',
         key7: null,
         key8: true,
+        key9: new Boolean(false),
       }
     };
     const expected = {
@@ -58,6 +59,7 @@ describe('signalfx-transform-helper', () => {
       detail__key6_: ' value space-surrounded ',
       detail_key7: 'null',
       detail_key8: 'true',
+      detail_key9: 'false',
     };
     const sanitizedAndPrefixed = signalfxHelper.extractDetailsForSfx(obj);
     expect(sanitizedAndPrefixed).to.deep.equal(expected);
