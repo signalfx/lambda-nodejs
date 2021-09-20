@@ -1,0 +1,45 @@
+default:
+  image: 'cimg/node:lts'
+
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - .npm/
+    - node_modules/
+
+stages:
+  - setup
+  - test
+  - release
+
+install:
+  stage: setup
+  script:
+    - npm ci
+
+test:
+  stage: test
+  script:
+    - npm test
+
+release:
+  stage: release
+  artifacts:
+    paths:
+      - dist/
+  only:
+    - /^v[0-9]+\.[0-9]+\.[0-9]+.*/
+  except:
+    - branches
+  script:
+    - npm pack
+    - mkdir dist
+    - mv signalfx-lambda-${CI_COMMIT_REF_NAME:1}.tgz dist/
+    - shasum -a 256 dist/* > dist/checksums.txt
+
+    # release in NPM
+    - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_SIGNALFX" > ~/.npmrc
+    - npm publish ./dist/signalfx-lambda-${CI_COMMIT_REF_NAME:1}.tgz
+    - rm -f ~/.npmrc
