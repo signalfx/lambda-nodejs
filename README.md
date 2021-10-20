@@ -91,8 +91,8 @@ To set your realm, use a subdomain, such as ingest.us1.signalfx.com or ingest.eu
     ```
 2. Set the service name and environment name as in the following example:
     ```
-     SIGNALFX_SERVICE_NAME: <service_name>
-     SIGNALFX_SPAN_TAGS: deployment.environment:<your-environment-name>
+    SIGNALFX_SERVICE_NAME=<service_name>
+    SIGNALFX_SPAN_TAGS=deployment.environment:<your-environment-name>
     ```
 3. If you use OpenTelemetry Collector, or want to ingest directly from a realm other than us0, then you must set at least one endpoint variable. (For environment variables, SignalFx defaults to the us0 realm. As a result, if you are not in the us0 realm, you may need to set your environment variables.) There are two options:
 
