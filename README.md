@@ -1,7 +1,7 @@
 >ℹ️&nbsp;&nbsp;SignalFx was acquired by Splunk in October 2019. See [Splunk SignalFx](https://www.splunk.com/en_us/investor-relations/acquisitions/signalfx.html) for more information.
 
 > # :warning: Deprecation Notice
-> The SignalFx Node.js Lambda Wrapper is deprecated. Only critical security fixes and bug fixes are provided.
+> The SignalFx Node.js Lambda Wrapper is deprecated and will reach End of Support on June 9, 2023. After that date, this repository will be archived and no longer receive updates. Until then, only critical security fixes and bug fixes will be provided.
 >
 > Going forward, Lambda functions should use the Splunk OpenTelemetry Lambda Layer, which offers similar capabilities and fully supports the OpenTelemetry standard. To learn more about the Splunk OTel Lambda Layer, see https://docs.splunk.com/Observability/gdi/get-data-in/serverless/aws/otel-lambda-layer/instrument-lambda-functions.html#nav-Instrument-your-Lambda-function
 
